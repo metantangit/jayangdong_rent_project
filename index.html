@@ -946,7 +946,7 @@
             btn.textContent = '로딩 중...';
 
             try {
-                const response = await fetch('data/nemoapp_live_data.json');
+                const response = await fetch('data/market_data.json');
                 const data = await response.json();
 
                 currentData = {

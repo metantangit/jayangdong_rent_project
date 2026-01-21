@@ -836,7 +836,7 @@
         // JSON 데이터 로드
         async function loadData() {
             try {
-                const response = await fetch('data/nemoapp_live_data.json');
+                const response = await fetch('data/market_data.json');
                 const data = await response.json();
                 processData(data.listings);
                 createDistChart('all');
