@@ -1,5 +1,4 @@
-# Data files
-data/
+# Scripts and docs
 scripts/
 docs/
 templates/
@@ -12,3 +11,4 @@ __pycache__/
 # Misc
 Untitled
 *.pdf
+README.md
