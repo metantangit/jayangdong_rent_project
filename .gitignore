@@ -1,0 +1,14 @@
+# Data files
+data/
+scripts/
+docs/
+templates/
+
+# System files
+.DS_Store
+*.pyc
+__pycache__/
+
+# Misc
+Untitled
+*.pdf
