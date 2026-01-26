@@ -462,7 +462,7 @@
                 const radius = parseInt(document.getElementById('inputRadius').value) || 300;
 
                 // 병렬 API 호출
-                const [dataRes, nearbyRes] = await Promise.all([
+                const [dataRes, storesRes, nearbyRes] = await Promise.all([
                     fetch(`${API_BASE}/data`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -476,6 +476,17 @@
                                 areas: false,
                                 overview: true
                             }
+                        })
+                    }).then(r => r.json()),
+                    fetch(`${API_BASE}/stores`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            center: { lat, lng },
+                            radius,
+                            category_ids: null,
+                            offset: 0,
+                            limit: 200
                         })
                     }).then(r => r.json()),
                     fetch(`${API_BASE}/nearby`, {
@@ -496,7 +507,7 @@
                 currentData = {
                     categories: dataRes.data?.categories?.items || [],
                     markers: dataRes.data?.markers?.items || [],
-                    stores: dataRes.data?.stores?.items || [],
+                    stores: storesRes.data?.stores?.items || [],
                     overview: dataRes.data?.overview || {},
                     nearby: nearbyRes,
                     center: { lat, lng },
