@@ -486,6 +486,58 @@
             </div>
         </div>
 
+        <!-- 광고중 vs 거래완료 비교 카드 -->
+        <div class="card" id="compareCard" style="display:none;">
+            <h2>📊 광고중 vs 거래완료 시세 비교</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <!-- 광고중 -->
+                <div style="background:rgba(16,185,129,0.08);border-radius:12px;padding:20px;border:1px solid rgba(16,185,129,0.2);">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:15px;">
+                        <span style="width:10px;height:10px;background:#10b981;border-radius:50%;"></span>
+                        <span style="font-weight:600;color:#10b981;">광고중 매물</span>
+                        <span id="openCount" style="color:#64748b;font-size:0.85rem;"></span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
+                        <div>
+                            <div id="openDeposit" style="font-size:1.3rem;font-weight:700;color:#2563eb;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평균 보증금</div>
+                        </div>
+                        <div>
+                            <div id="openRent" style="font-size:1.3rem;font-weight:700;color:#10b981;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평균 월세</div>
+                        </div>
+                        <div>
+                            <div id="openPrice" style="font-size:1.3rem;font-weight:700;color:#7c3aed;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평당가</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 거래완료 -->
+                <div style="background:rgba(100,116,139,0.08);border-radius:12px;padding:20px;border:1px solid rgba(100,116,139,0.2);">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:15px;">
+                        <span style="width:10px;height:10px;background:#64748b;border-radius:50%;"></span>
+                        <span style="font-weight:600;color:#64748b;">거래완료</span>
+                        <span id="closedCount" style="color:#64748b;font-size:0.85rem;"></span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
+                        <div>
+                            <div id="closedDeposit" style="font-size:1.3rem;font-weight:700;color:#2563eb;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평균 보증금</div>
+                        </div>
+                        <div>
+                            <div id="closedRent" style="font-size:1.3rem;font-weight:700;color:#10b981;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평균 월세</div>
+                        </div>
+                        <div>
+                            <div id="closedPrice" style="font-size:1.3rem;font-weight:700;color:#7c3aed;">-</div>
+                            <div style="font-size:0.75rem;color:#64748b;">평당가</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="priceDiff" style="margin-top:15px;text-align:center;font-size:0.9rem;color:#64748b;"></div>
+        </div>
+
         <!-- Charts Row -->
         <div class="chart-row">
             <!-- Floor Price Chart -->
@@ -513,11 +565,19 @@
                 <!-- 범례 -->
                 <div style="position:absolute;bottom:20px;left:20px;background:#fff;border:1px solid #e2e8f0;padding:12px 16px;border-radius:10px;font-size:0.8rem;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                     <div style="margin-bottom:8px;font-weight:600;color:#1e293b;">층별 색상</div>
-                    <div style="display:flex;gap:15px;flex-wrap:wrap;color:#64748b;">
+                    <div style="display:flex;gap:15px;flex-wrap:wrap;color:#64748b;margin-bottom:10px;">
                         <span><span style="display:inline-block;width:12px;height:12px;background:#f59e0b;border-radius:50%;margin-right:5px;"></span>지하</span>
                         <span><span style="display:inline-block;width:12px;height:12px;background:#10b981;border-radius:50%;margin-right:5px;"></span>1층</span>
                         <span><span style="display:inline-block;width:12px;height:12px;background:#a855f7;border-radius:50%;margin-right:5px;"></span>2층+</span>
                         <span style="color:#94a3b8;">| 투명 = 거래완료</span>
+                    </div>
+                    <div style="border-top:1px solid #e2e8f0;padding-top:8px;margin-top:4px;">
+                        <div style="font-weight:600;color:#1e293b;margin-bottom:6px;">평당가 등급 (크기)</div>
+                        <div style="display:flex;gap:12px;align-items:center;color:#64748b;">
+                            <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;background:#64748b;border-radius:50%;"></span>하위</span>
+                            <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:12px;height:12px;background:#64748b;border-radius:50%;"></span>중위</span>
+                            <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:16px;height:16px;background:#64748b;border-radius:50%;"></span>상위</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -527,15 +587,34 @@
         <div class="card">
             <h2>🏢 월세 매물 리스트 <span id="listingCount" style="font-size:0.8rem;color:#888;font-weight:normal;"></span></h2>
 
-            <!-- 층 필터 -->
-            <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                <span style="color:#888;font-size:0.9rem;">층 필터:</span>
-                <button class="filter-btn active" data-floor="all" onclick="filterByFloor('all')">전체</button>
-                <button class="filter-btn" data-floor="basement" onclick="filterByFloor('basement')">지하</button>
-                <button class="filter-btn" data-floor="1" onclick="filterByFloor('1')">1층</button>
-                <button class="filter-btn" data-floor="upper" onclick="filterByFloor('upper')">2층 이상</button>
-                <span id="filterStats" style="margin-left:20px;color:#00d4ff;font-size:0.85rem;"></span>
+            <!-- 필터 -->
+            <div style="margin-bottom:20px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+                <!-- 거래상태 필터 -->
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span style="color:#888;font-size:0.9rem;">거래상태:</span>
+                    <button class="filter-btn active" data-state="all" onclick="filterByState('all')">전체</button>
+                    <button class="filter-btn" data-state="open" onclick="filterByState('open')">🟢 광고중</button>
+                    <button class="filter-btn" data-state="closed" onclick="filterByState('closed')">⚪ 거래완료</button>
+                </div>
+                <!-- 연도 필터 -->
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span style="color:#888;font-size:0.9rem;">연도:</span>
+                    <button class="filter-btn active" data-year="all" onclick="filterByYear('all')">전체</button>
+                    <button class="filter-btn" data-year="2026" onclick="filterByYear('2026')">2026</button>
+                    <button class="filter-btn" data-year="2025" onclick="filterByYear('2025')">2025</button>
+                    <button class="filter-btn" data-year="2024" onclick="filterByYear('2024')">2024</button>
+                    <button class="filter-btn" data-year="older" onclick="filterByYear('older')">2023↓</button>
+                </div>
+                <!-- 층 필터 -->
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span style="color:#888;font-size:0.9rem;">층:</span>
+                    <button class="filter-btn active" data-floor="all" onclick="filterByFloor('all')">전체</button>
+                    <button class="filter-btn" data-floor="basement" onclick="filterByFloor('basement')">지하</button>
+                    <button class="filter-btn" data-floor="1" onclick="filterByFloor('1')">1층</button>
+                    <button class="filter-btn" data-floor="upper" onclick="filterByFloor('upper')">2층 이상</button>
+                </div>
             </div>
+            <div id="filterStats" style="margin-bottom:15px;color:#2563eb;font-size:0.85rem;padding:10px 15px;background:rgba(37,99,235,0.05);border-radius:8px;"></div>
 
             <div id="listingsTable">
                 <div class="empty-state">
@@ -581,6 +660,8 @@
         let currentData = null;
         let currentPage = 1;
         let currentFloorFilter = 'all';
+        let currentStateFilter = 'all';
+        let currentYearFilter = 'all';
         const ITEMS_PER_PAGE = 15;
         let map = null;
 
@@ -965,6 +1046,7 @@
                 updateQuarterlyTable(data.stats.complateItems || []);
                 updateMap(data.listings || []);
                 updateFilterStats(data.listings || []);
+                updateCompareCard(data.listings || []);
 
                 showToast(`데이터 로드 완료! (${data.area}, ${data.listings?.length || 0}개 매물)`, 'success');
 
@@ -977,22 +1059,51 @@
         }
 
         // ============================================
-        // 층 필터
+        // 필터
         // ============================================
+
+        function filterByState(stateType) {
+            currentStateFilter = stateType;
+            currentPage = 1;
+
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.filter-btn[data-state]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.state === stateType);
+            });
+
+            applyFilters();
+        }
+
+        function filterByYear(yearType) {
+            currentYearFilter = yearType;
+            currentPage = 1;
+
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.filter-btn[data-year]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.year === yearType);
+            });
+
+            applyFilters();
+        }
 
         function filterByFloor(floorType) {
             currentFloorFilter = floorType;
             currentPage = 1;
 
             // 버튼 활성화 상태 변경
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+            document.querySelectorAll('.filter-btn[data-floor]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.floor === floorType);
             });
 
+            applyFilters();
+        }
+
+        function applyFilters() {
             if (currentData && currentData.listings) {
                 const filtered = getFilteredListings();
                 updateListingsTable(filtered, 1);
                 updateFilterStats(filtered);
+                updateMap(filtered);
             }
         }
 
@@ -1003,13 +1114,32 @@
             const filtered = [];
             currentData.listings.forEach(building => {
                 const items = (building.items || []).filter(item => {
-                    const floor = item.floor || 0;
-                    switch (currentFloorFilter) {
-                        case 'basement': return floor < 0;
-                        case '1': return floor === 1;
-                        case 'upper': return floor >= 2;
-                        default: return true;
+                    // 상태 필터
+                    const stateMatch = currentStateFilter === 'all' ? true :
+                        currentStateFilter === 'open' ? item.state === 1 :
+                        currentStateFilter === 'closed' ? item.state !== 1 : true;
+
+                    // 연도 필터 (거래완료일 또는 등록일 기준)
+                    let yearMatch = true;
+                    if (currentYearFilter !== 'all') {
+                        const dateStr = item.completionConfirmedDateUtc || item.createdDateUtc || '';
+                        const itemYear = dateStr ? parseInt(dateStr.slice(0, 4)) : null;
+
+                        if (currentYearFilter === 'older') {
+                            yearMatch = itemYear && itemYear <= 2023;
+                        } else {
+                            yearMatch = itemYear === parseInt(currentYearFilter);
+                        }
                     }
+
+                    // 층 필터
+                    const floor = item.floor || 0;
+                    const floorMatch = currentFloorFilter === 'all' ? true :
+                        currentFloorFilter === 'basement' ? floor < 0 :
+                        currentFloorFilter === '1' ? floor === 1 :
+                        currentFloorFilter === 'upper' ? floor >= 2 : true;
+
+                    return stateMatch && yearMatch && floorMatch;
                 });
                 if (items.length > 0) {
                     filtered.push({ ...building, items });
@@ -1023,7 +1153,7 @@
             const allItems = flattenItems(listings);
 
             if (!allItems.length) {
-                statsEl.textContent = '해당 조건 매물 없음';
+                statsEl.innerHTML = '해당 조건에 맞는 매물이 없습니다';
                 return;
             }
 
@@ -1033,9 +1163,69 @@
             const avgPrice = allItems.reduce((s, i) => s + (i.areaPrice || 0), 0) / allItems.length;
 
             const fmtDep = avgDep >= 10000 ? (avgDep/10000).toFixed(1) + '억' : Math.round(avgDep).toLocaleString() + '만';
-            const completedCount = allItems.filter(i => i.state === 3).length;
+            const openCount = allItems.filter(i => i.state === 1).length;
+            const closedCount = allItems.filter(i => i.state !== 1).length;
 
-            statsEl.textContent = `${allItems.length}건 (거래완료 ${completedCount}) | 평균 보증금 ${fmtDep} / 월세 ${Math.round(avgRent)}만 / 평당 ${avgPrice.toFixed(1)}만`;
+            statsEl.innerHTML = `
+                <strong>${allItems.length}건</strong>
+                (🟢 광고중 ${openCount} / ⚪ 거래완료 ${closedCount}) |
+                평균 보증금 <strong>${fmtDep}</strong> /
+                월세 <strong>${Math.round(avgRent)}만</strong> /
+                평당 <strong>${avgPrice.toFixed(1)}만</strong>
+            `;
+        }
+
+        // ============================================
+        // 광고중 vs 거래완료 비교 카드
+        // ============================================
+
+        function updateCompareCard(listings) {
+            const card = document.getElementById('compareCard');
+            const allItems = flattenItems(listings);
+
+            if (!allItems.length) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+
+            const openItems = allItems.filter(i => i.state === 1);
+            const closedItems = allItems.filter(i => i.state !== 1);
+
+            const calcAvg = (items, key) => items.length ? items.reduce((s, i) => s + (i[key] || 0), 0) / items.length : 0;
+            const fmt = (v) => v >= 10000 ? (v/10000).toFixed(1) + '억' : Math.round(v).toLocaleString() + '만';
+
+            // 광고중 통계
+            document.getElementById('openCount').textContent = `(${openItems.length}건)`;
+            document.getElementById('openDeposit').textContent = openItems.length ? fmt(calcAvg(openItems, 'deposit')) : '-';
+            document.getElementById('openRent').textContent = openItems.length ? Math.round(calcAvg(openItems, 'monthlyRent')) + '만' : '-';
+            document.getElementById('openPrice').textContent = openItems.length ? calcAvg(openItems, 'areaPrice').toFixed(1) + '만' : '-';
+
+            // 거래완료 통계
+            document.getElementById('closedCount').textContent = `(${closedItems.length}건)`;
+            document.getElementById('closedDeposit').textContent = closedItems.length ? fmt(calcAvg(closedItems, 'deposit')) : '-';
+            document.getElementById('closedRent').textContent = closedItems.length ? Math.round(calcAvg(closedItems, 'monthlyRent')) + '만' : '-';
+            document.getElementById('closedPrice').textContent = closedItems.length ? calcAvg(closedItems, 'areaPrice').toFixed(1) + '만' : '-';
+
+            // 가격 차이 분석
+            const priceDiffEl = document.getElementById('priceDiff');
+            if (openItems.length && closedItems.length) {
+                const openAvgRent = calcAvg(openItems, 'monthlyRent');
+                const closedAvgRent = calcAvg(closedItems, 'monthlyRent');
+                const diff = openAvgRent - closedAvgRent;
+                const diffPct = ((diff / closedAvgRent) * 100).toFixed(1);
+
+                if (diff > 0) {
+                    priceDiffEl.innerHTML = `💡 <strong>광고중 매물이 거래완료 대비 월세 ${Math.round(diff)}만원 (${diffPct}%) 높음</strong> → 협상 여지 있음`;
+                } else if (diff < 0) {
+                    priceDiffEl.innerHTML = `💡 <strong>광고중 매물이 거래완료 대비 월세 ${Math.round(Math.abs(diff))}만원 (${Math.abs(diffPct)}%) 낮음</strong> → 시세 하락 추세`;
+                } else {
+                    priceDiffEl.textContent = '💡 광고중과 거래완료 시세가 유사함';
+                }
+            } else {
+                priceDiffEl.textContent = '';
+            }
         }
 
         // ============================================
@@ -1069,6 +1259,17 @@
 
             if (!listings.length) return;
 
+            // 평당가 기준 3분위 계산
+            const allPrices = [];
+            listings.forEach(building => {
+                (building.items || []).forEach(item => {
+                    if (item.areaPrice > 0) allPrices.push(item.areaPrice);
+                });
+            });
+            allPrices.sort((a, b) => a - b);
+            const lowThreshold = allPrices[Math.floor(allPrices.length * 0.33)] || 0;
+            const highThreshold = allPrices[Math.floor(allPrices.length * 0.66)] || 0;
+
             // 마커 추가 (개별 매물 단위)
             const markers = [];
             listings.forEach(building => {
@@ -1091,8 +1292,19 @@
                     else if (floor === 1) color = '#10b981';
                     else if (floor >= 2) color = '#a855f7';
 
-                    // 상태별 투명도
-                    const opacity = item.state === 1 ? 1 : 0.5;
+                    // 평당가 등급별 마커 크기
+                    let radius = 10;
+                    let priceGrade = '중위';
+                    if (price <= lowThreshold) {
+                        radius = 7;
+                        priceGrade = '하위';
+                    } else if (price >= highThreshold) {
+                        radius = 14;
+                        priceGrade = '상위';
+                    }
+
+                    // 상태별 투명도 (거래완료는 0.85로 선명하게)
+                    const opacity = item.state === 1 ? 1 : 0.85;
                     const stateText = item.state === 1 ? '🟢 광고중' : '⚪ 거래완료';
                     const date = item.completionConfirmedDateUtc ? ' (' + item.completionConfirmedDateUtc.slice(0,10) + ')' : '';
 
@@ -1100,7 +1312,7 @@
                     const offset = idx * 0.00003;
 
                     const marker = L.circleMarker([lat + offset, lng + offset], {
-                        radius: 10,
+                        radius: radius,
                         fillColor: color,
                         color: '#fff',
                         weight: 2,
@@ -1111,9 +1323,10 @@
                     marker.bindPopup(`
                         <div style="font-size:13px;line-height:1.6;">
                             <b style="color:#333;">${addr}</b><br>
-                            <span style="color:#00d4ff;font-weight:600;">보증금 ${fmtDep}</span> /
+                            <span style="color:#2563eb;font-weight:600;">보증금 ${fmtDep}</span> /
                             <span style="color:#10b981;font-weight:600;">월세 ${Math.round(rent)}만</span><br>
-                            <span style="color:#7c3aed;font-weight:600;">평당 ${price.toFixed(1)}만</span><br>
+                            <span style="color:#7c3aed;font-weight:600;">평당 ${price.toFixed(1)}만</span>
+                            <span style="background:${priceGrade === '상위' ? '#ef4444' : priceGrade === '하위' ? '#3b82f6' : '#64748b'};color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;margin-left:5px;">${priceGrade}</span><br>
                             <span style="color:#666;">${floor}층 · ${stateText}${date}</span>
                         </div>
                     `, { className: 'custom-popup' });
