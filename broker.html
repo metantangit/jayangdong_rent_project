@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공인중개사 현황 - 광진구</title>
+    <title>공인중개사 현황</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -256,11 +256,124 @@
             max-height: 500px;
             overflow-y: auto;
         }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th, td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* 칼럼 너비 지정 */
+        th:nth-child(1), td:nth-child(1) { width: 60px; }  /* 동 */
+        th:nth-child(2), td:nth-child(2) { width: 25%; }   /* 상호명 */
+        th:nth-child(3), td:nth-child(3) { width: 25%; }   /* 대표자/연락처 */
+        th:nth-child(4), td:nth-child(4) { width: 70px; }  /* 영업기간 */
+        th:nth-child(5), td:nth-child(5) { width: 50px; }  /* 소속 */
+        th:nth-child(6), td:nth-child(6) { width: 80px; }  /* 상태 */
+        .tel-list { font-size: 0.75rem; color: #666; line-height: 1.4; }
+
+        /* 추천 중개사 섹션 */
+        .recommended-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-header h2 {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin: 0;
+        }
+        .section-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        .rec-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .rec-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .rec-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(37,99,235,0.1);
+            color: var(--primary);
+        }
+        .rec-badge.excellent {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        .rec-badge.veteran {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        .rec-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 8px;
+            padding-right: 50px;
+        }
+        .rec-info {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .rec-info span {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--bg);
+            color: var(--text-muted);
+        }
+        .rec-contact {
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+        .rec-rep {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .rec-tel {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .rec-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .rec-link:hover {
+            text-decoration: underline;
         }
         th {
             background: var(--bg);
@@ -383,13 +496,22 @@
             <a href="index.html">실시간 시세</a>
             <a href="broker.html" class="active">공인중개사</a>
             <a href="analysis.html">임대 분석</a>
+            <a href="sangwon_analysis.html">상권 분석</a>
             <a href="report.html">전략 보고서</a>
         </nav>
 
         <!-- Header -->
         <header>
-            <h1>광진구 공인중개사 현황</h1>
-            <p class="subtitle">서울시 광진구 등록 공인중개사 정보 | 데이터 출처: 서울시 부동산정보광장</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <h1 style="margin: 0;">공인중개사 현황</h1>
+                <select id="guSelect" onchange="changeGu(this.value)" style="padding: 8px 16px; font-size: 1rem; border: 2px solid var(--primary); border-radius: 8px; background: white; cursor: pointer;">
+                    <option value="광진구">광진구</option>
+                    <option value="성동구">성동구</option>
+                    <option value="용산구">용산구</option>
+                    <option value="강남구">강남구</option>
+                </select>
+            </div>
+            <p class="subtitle">서울시 등록 공인중개사 정보 | 데이터 출처: 서울시 부동산정보광장 (총 2,700개)</p>
         </header>
 
         <!-- Stats -->
@@ -416,20 +538,107 @@
             </div>
         </div>
 
+        <!-- 추천 중개사 (광진구 전용) -->
+        <div class="recommended-section" id="recommendedSection" data-gu="광진구">
+            <div class="section-header">
+                <h2>추천 중개사</h2>
+                <span class="section-desc">검토 완료된 중개사 목록</span>
+            </div>
+            <div class="recommended-grid">
+                <div class="rec-card">
+                    <div class="rec-badge">전자계약</div>
+                    <div class="rec-name">VIP부동산공인중개사사무소</div>
+                    <div class="rec-info">
+                        <span class="rec-dong">자양동</span>
+                        <span class="rec-years">7.6년</span>
+                        <span class="rec-staff">10명</span>
+                    </div>
+                    <div class="rec-contact">
+                        <div class="rec-rep">임태희</div>
+                        <div class="rec-tel">02-454-2334</div>
+                    </div>
+                    <a href="https://new.land.naver.com/complexes?ms=37.5377138,127.082284,19&a=APT:PRE:ABYG:JGC&e=RETAIL&realtorId=vip4542334" target="_blank" class="rec-link">네이버 부동산 →</a>
+                </div>
+                <div class="rec-card">
+                    <div class="rec-badge excellent">우수업체</div>
+                    <div class="rec-name">에이원공인중개사사무소</div>
+                    <div class="rec-info">
+                        <span class="rec-dong">자양동</span>
+                        <span class="rec-years">3.8년</span>
+                        <span class="rec-staff">10명</span>
+                    </div>
+                    <div class="rec-contact">
+                        <div class="rec-rep">정용호</div>
+                        <div class="rec-tel">02-466-6466</div>
+                    </div>
+                    <a href="https://map.naver.com/p/search/에이원공인중개사무소/place/1728297758" target="_blank" class="rec-link">네이버 지도 →</a>
+                </div>
+                <div class="rec-card">
+                    <div class="rec-badge veteran">19년+</div>
+                    <div class="rec-name">건대역다물공인중개사사무소</div>
+                    <div class="rec-info">
+                        <span class="rec-dong">자양동</span>
+                        <span class="rec-years">19.6년</span>
+                        <span class="rec-staff">3명</span>
+                    </div>
+                    <div class="rec-contact">
+                        <div class="rec-rep">권봉이</div>
+                        <div class="rec-tel">02-499-0001</div>
+                    </div>
+                </div>
+                <div class="rec-card">
+                    <div class="rec-name">황소공인중개사사무소</div>
+                    <div class="rec-info">
+                        <span class="rec-dong">자양동</span>
+                        <span class="rec-years">7년</span>
+                        <span class="rec-staff">2명</span>
+                    </div>
+                    <div class="rec-contact">
+                        <div class="rec-rep">이선화</div>
+                        <div class="rec-tel">02-462-8898</div>
+                    </div>
+                </div>
+                <div class="rec-card">
+                    <div class="rec-name">성심공인중개사사무소</div>
+                    <div class="rec-info">
+                        <span class="rec-dong">구의동</span>
+                        <span class="rec-years">4.1년</span>
+                        <span class="rec-staff">3명</span>
+                    </div>
+                    <div class="rec-contact">
+                        <div class="rec-rep">서숙희</div>
+                        <div class="rec-tel">02-456-4925</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Controls -->
         <div class="controls-row">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="상호명, 대표자, 주소로 검색...">
             </div>
             <div class="filter-group" id="dongFilter">
-                <button class="filter-btn dong-btn active" data-dong="all">전체</button>
-                <button class="filter-btn dong-btn" data-dong="자양동">자양동</button>
-                <button class="filter-btn dong-btn" data-dong="구의동">구의동</button>
-                <button class="filter-btn dong-btn" data-dong="중곡동">중곡동</button>
-                <button class="filter-btn dong-btn" data-dong="화양동">화양동</button>
-                <button class="filter-btn dong-btn" data-dong="광장동">광장동</button>
-                <button class="filter-btn dong-btn" data-dong="군자동">군자동</button>
-                <button class="filter-btn dong-btn" data-dong="능동">능동</button>
+                <!-- 동 버튼은 JS에서 동적 생성 -->
+            </div>
+        </div>
+        <div class="controls-row">
+            <div class="filter-group" style="flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">영업기간:</span>
+                    <input type="number" id="yearsMin" placeholder="최소" min="0" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+                    <span>~</span>
+                    <input type="number" id="yearsMax" placeholder="최대" min="0" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">년</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">직원 수:</span>
+                    <input type="number" id="staffMin" placeholder="최소" min="0" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+                    <span>~</span>
+                    <input type="number" id="staffMax" placeholder="최대" min="0" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">명</span>
+                </div>
+                <button class="filter-btn" onclick="resetRangeFilters()" style="margin-left: 10px;">초기화</button>
             </div>
         </div>
         <div class="controls-row">
@@ -444,18 +653,8 @@
 
         <!-- Main Content -->
         <div class="main-grid">
-            <!-- Map -->
-            <div class="map-container">
-                <div class="map-header">
-                    <span>📍 위치 지도</span>
-                    <div class="map-info">
-                        선택된 중개사: <span class="count" id="selectedCount">0</span>개
-                    </div>
-                </div>
-                <div class="selected-badges" id="selectedBadges">
-                    <span class="no-selection">테이블에서 중개사를 클릭하면 지도에 표시됩니다</span>
-                    <button onclick="clearAllMarkers()" style="margin-left:auto; padding:5px 10px; background:#ef4444; border:none; border-radius:5px; color:#fff; cursor:pointer;">전체 삭제</button>
-                </div>
+            <!-- Map (숨김) -->
+            <div class="map-container" style="display:none;">
                 <div id="map"></div>
             </div>
 
@@ -502,7 +701,14 @@
         let currentDong = 'all';
         let expandedRow = null;
 
-        const DONGS = ['광장동', '구의동', '군자동', '능동', '자양동', '중곡동', '화양동'];
+        const GU_DATA = {
+            '광진구': ['광장동', '구의동', '군자동', '능동', '자양동', '중곡동', '화양동'],
+            '성동구': ['성수동1가', '성수동2가'],
+            '용산구': ['이태원동', '한남동'],
+            '강남구': ['논현동', '삼성동', '신사동', '역삼동', '청담동']
+        };
+        let currentGu = '광진구';
+        let DONGS = GU_DATA[currentGu];
 
         // 영업기간 계산
         function calcYears(regDate) {
@@ -516,12 +722,36 @@
             return Math.round(diff * 10) / 10;
         }
 
+        // 구 변경
+        function changeGu(gu) {
+            currentGu = gu;
+            DONGS = GU_DATA[gu];
+            allBrokers = {};
+            currentDong = 'all';
+            currentFilter = 'all';
+            // 필터 초기화
+            document.querySelectorAll('.years-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.years-btn[data-filter="all"]')?.classList.add('active');
+            resetRangeFilters();
+            // 추천 중개사 섹션 표시/숨김
+            updateRecommendedSection(gu);
+            loadData();
+        }
+
+        // 추천 중개사 섹션 표시/숨김
+        function updateRecommendedSection(gu) {
+            const section = document.getElementById('recommendedSection');
+            if (section) {
+                section.style.display = section.dataset.gu === gu ? 'block' : 'none';
+            }
+        }
+
         // 데이터 로드 (동별 파일)
         async function loadData() {
             try {
                 // 모든 동 데이터 병렬 로드
                 const promises = DONGS.map(dong =>
-                    fetch(`data/brokers/${dong}.json`).then(r => r.json())
+                    fetch(`data/brokers/${currentGu}/${dong}.json`).then(r => r.json())
                 );
                 const results = await Promise.all(promises);
 
@@ -541,10 +771,9 @@
 
                 updateStats(totalCount);
                 renderTable(filteredBrokers);
-                initMap();
                 initSorting();
                 initFilters();
-                initDongFilters();
+                renderDongButtons();  // 동 버튼 동적 생성
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
             }
@@ -589,14 +818,25 @@
                     }).join('')
                     : '<div style="color:#888;">정보 없음</div>';
 
+                // 연락처 포맷팅 (첫 번째 대표번호만 표시)
+                const telRaw = broker.telno?.trim() || '';
+                let firstTel = telRaw.split(/[,\n]/)[0]?.trim() || '-';
+                // 02로 시작하지 않고 숫자로 시작하면 02- 붙이기
+                if (firstTel !== '-' && /^\d/.test(firstTel) && !firstTel.startsWith('02') && !firstTel.startsWith('010')) {
+                    firstTel = '02-' + firstTel;
+                }
+
                 return `
                 <tr class="broker-row" data-idx="${idx}">
                     <td style="font-size: 0.8rem; color: #888;">${broker.dong || '-'}</td>
                     <td>
-                        <div style="font-weight: 600; margin-bottom: 3px;">${broker.cmpNm}</div>
-                        <div style="font-size: 0.75rem; color: #666;">${broker.address.substring(0, 20)}...</div>
+                        <div style="font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${broker.cmpNm}</div>
+                        <div style="font-size: 0.75rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${broker.address.substring(0, 25)}...</div>
                     </td>
-                    <td>${broker.rdealerNm}</td>
+                    <td>
+                        <div style="font-weight: 500;">${broker.rdealerNm}</div>
+                        <div class="tel-list">${firstTel}</div>
+                    </td>
                     <td><span class="status-badge badge-years ${yearsClass}">${yearsText}</span></td>
                     <td style="text-align: center;">${staffText}</td>
                     <td>${statusBadges}</td>
@@ -614,7 +854,7 @@
                             </div>
                             <div class="detail-item">
                                 <div class="label">전화번호</div>
-                                <div class="value">${broker.telno?.trim() || '-'}</div>
+                                <div class="value" style="font-size: 0.85rem; line-height: 1.5;">${telRaw.replace(/\n/g, ', ') || '-'}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="label">전자계약</div>
@@ -687,6 +927,17 @@
             document.getElementById('displayCount').textContent = `${data.length}개 표시`;
         }
 
+        // 동 필터 버튼 동적 생성
+        function renderDongButtons() {
+            const container = document.getElementById('dongFilter');
+            let html = '<button class="filter-btn dong-btn active" data-dong="all">전체</button>';
+            DONGS.forEach(dong => {
+                html += `<button class="filter-btn dong-btn" data-dong="${dong}">${dong}</button>`;
+            });
+            container.innerHTML = html;
+            initDongFilters();
+        }
+
         // 동 필터 기능
         function initDongFilters() {
             document.querySelectorAll('.dong-btn').forEach(btn => {
@@ -708,6 +959,24 @@
             });
         }
 
+        // 범위 필터 초기화
+        function resetRangeFilters() {
+            document.getElementById('yearsMin').value = '';
+            document.getElementById('yearsMax').value = '';
+            document.getElementById('staffMin').value = '';
+            document.getElementById('staffMax').value = '';
+            if (brokers.length > 0) {
+                applyFilters();
+            }
+        }
+
+        // 범위 필터 이벤트 초기화
+        function initRangeFilters() {
+            ['yearsMin', 'yearsMax', 'staffMin', 'staffMax'].forEach(id => {
+                document.getElementById(id).addEventListener('input', applyFilters);
+            });
+        }
+
         // 영업기간 필터 기능
         function initFilters() {
             document.querySelectorAll('.years-btn').forEach(btn => {
@@ -723,6 +992,12 @@
         function applyFilters() {
             const query = document.getElementById('searchInput').value.toLowerCase();
 
+            // 범위 필터 값 가져오기
+            const yearsMin = parseFloat(document.getElementById('yearsMin').value) || null;
+            const yearsMax = parseFloat(document.getElementById('yearsMax').value) || null;
+            const staffMin = parseInt(document.getElementById('staffMin').value) || null;
+            const staffMax = parseInt(document.getElementById('staffMax').value) || null;
+
             filteredBrokers = brokers.filter(b => {
                 // 검색 필터
                 const matchSearch = b.cmpNm.toLowerCase().includes(query) ||
@@ -731,11 +1006,21 @@
 
                 if (!matchSearch) return false;
 
-                // 영업기간 필터
-                if (currentFilter === '10+') return b.years >= 10;
-                if (currentFilter === '5+') return b.years >= 5 && b.years < 10;
-                if (currentFilter === '5-') return b.years !== null && b.years < 5;
-                if (currentFilter === 'excellent') return b.exclncYn === 'Y';
+                // 영업기간 버튼 필터
+                if (currentFilter === '10+' && (b.years === null || b.years < 10)) return false;
+                if (currentFilter === '5+' && (b.years === null || b.years < 5 || b.years >= 10)) return false;
+                if (currentFilter === '5-' && (b.years === null || b.years >= 5)) return false;
+                if (currentFilter === 'excellent' && b.exclncYn !== 'Y') return false;
+
+                // 영업기간 범위 필터
+                if (yearsMin !== null && (b.years === null || b.years < yearsMin)) return false;
+                if (yearsMax !== null && (b.years === null || b.years > yearsMax)) return false;
+
+                // 직원 수 범위 필터
+                const staffCount = b.staffCount || 0;
+                if (staffMin !== null && staffCount < staffMin) return false;
+                if (staffMax !== null && staffCount > staffMax) return false;
+
                 return true;
             });
 
@@ -990,6 +1275,8 @@
         }
 
         // 초기화
+        initRangeFilters();  // 범위 필터 이벤트는 한 번만 초기화
+        updateRecommendedSection(currentGu);  // 추천 섹션 초기 표시
         loadData();
     </script>
 </body>

@@ -297,6 +297,7 @@
             <a href="index.html">실시간 시세</a>
             <a href="broker.html">공인중개사</a>
             <a href="analysis.html" class="active">임대 분석</a>
+            <a href="sangwon_analysis.html">상권 분석</a>
             <a href="report.html">전략 보고서</a>
         </nav>
 
@@ -490,7 +491,7 @@
         async function loadData() {
             try {
                 const promises = DONGS.map(dong =>
-                    fetch(`data/brokers/${dong}.json`).then(r => r.json())
+                    fetch(`data/brokers/광진구/${dong}.json`).then(r => r.json())
                 );
                 const results = await Promise.all(promises);
 

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상권 분석 - 자양동</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .nav { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .nav a {
+            padding: 10px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav a:hover, .nav a.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: var(--card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 10px; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; }
+        .live-badge {
+            display: inline-block;
+            background: var(--success);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { font-size: 0.8rem; color: var(--text-muted); }
+        input, select {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        button:hover { background: var(--primary-light); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .grid-full { grid-column: 1 / -1; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .card h2 {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+        .summary-item {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+        .summary-item .value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .summary-item .label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .summary-item.green .value { color: var(--success); }
+        .summary-item.purple .value { color: #7c3aed; }
+        .summary-item.yellow .value { color: var(--warning); }
+        .summary-item.red .value { color: #ef4444; }
+
+        /* 카테고리 토글 */
+        .category-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card);
+        }
+        .category-header:hover { background: var(--bg); }
+        .category-color { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+        .category-name { flex: 1; font-size: 0.9rem; font-weight: 500; }
+        .category-count { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+        .category-arrow {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .category-item.open .category-arrow { transform: rotate(180deg); }
+        .category-stores {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--bg);
+        }
+        .category-item.open .category-stores { max-height: 500px; overflow-y: auto; }
+        .store-item {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .store-name { color: var(--text); }
+        .store-address { color: var(--text-muted); font-size: 0.8rem; }
+
+        .nearby-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            background: var(--bg);
+            border-radius: 10px;
+        }
+        .nearby-item:hover { background: rgba(37,99,235,0.05); transform: translateX(3px); }
+        .nearby-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .nearby-info { flex: 1; }
+        .nearby-name { font-weight: 600; font-size: 0.9rem; }
+        .nearby-detail { font-size: 0.8rem; color: var(--text-muted); }
+        .nearby-distance { font-size: 0.85rem; font-weight: 600; color: var(--primary); }
+
+        #map { height: 500px; border-radius: 12px; background: #e8e8e8; cursor: crosshair; }
+        .map-hint {
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: rgba(37,99,235,0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid #ef4444; }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .loading-overlay.show { opacity: 1; pointer-events: auto; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html">실시간 시세</a>
+            <a href="broker.html">공인중개사</a>
+            <a href="analysis.html">임대 분석</a>
+            <a href="sangwon_analysis.html" class="active">상권 분석</a>
+            <a href="report.html">전략 보고서</a>
+        </nav>
+
+        <header>
+            <h1>상권 분석 대시보드 <span class="live-badge">LIVE</span></h1>
+            <p class="subtitle">지도를 클릭하면 자동으로 해당 위치의 상권이 분석됩니다</p>
+        </header>
+
+        <!-- 지도 -->
+        <div class="grid">
+            <div class="card grid-full">
+                <h2>🗺️ 위치 선택 (클릭하면 자동 분석)</h2>
+                <div id="map"></div>
+                <div class="map-hint">
+                    <span>💡</span>
+                    <span>지도를 클릭하면 자동으로 상권 분석이 시작됩니다. 반경을 변경하려면 아래에서 설정 후 다시 클릭하세요.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label>위도</label>
+                <input type="text" id="inputLat" value="37.5334" style="width:140px;" readonly>
+            </div>
+            <div class="control-group">
+                <label>경도</label>
+                <input type="text" id="inputLng" value="127.0675" style="width:140px;" readonly>
+            </div>
+            <div class="control-group">
+                <label>반경 (m)</label>
+                <input type="number" id="inputRadius" value="300" min="100" max="5000" step="100" style="width:100px;">
+            </div>
+            <div class="control-group">
+                <label>현재 주소</label>
+                <input type="text" id="currentAddress" value="-" style="width:250px;" readonly>
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <div class="grid">
+            <div class="card grid-full">
+                <h2>📊 상권 개요</h2>
+                <div class="summary-grid" id="summaryGrid">
+                    <div style="text-align:center;color:#888;padding:20px;grid-column:1/-1;">지도에서 위치를 클릭하세요</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 업종별 분포 (토글) -->
+        <div class="grid">
+            <div class="card grid-full">
+                <h2>🏪 업종별 분포 (클릭하여 매장 목록 보기)</h2>
+                <div id="categoryList">
+                    <div style="text-align:center;color:#888;padding:20px;">데이터 없음</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 주변시설 -->
+        <div class="grid">
+            <div class="card">
+                <h2>🚇 주변 시설</h2>
+                <div id="nearbyList">
+                    <div style="text-align:center;color:#888;padding:20px;">데이터 없음</div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>🏠 주변 아파트</h2>
+                <div id="apartmentList">
+                    <div style="text-align:center;color:#888;padding:20px;">데이터 없음</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>상권 분석 | DOTS Project</p>
+        </footer>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 로컬 프록시 서버 사용 (node proxy-server.js 실행 필요)
+        const API_BASE = '/api/v1/maps';
+
+        const CATEGORY_COLORS = {
+            1: '#F68F46', 2: '#F2C048', 3: '#A9C644', 4: '#4589FF',
+            5: '#2A9D8F', 6: '#E05456', 7: '#8E5BE5', 8: '#FF709B'
+        };
+        const CATEGORY_NAMES = {
+            1: '음식점', 2: '카페/디저트', 3: '주점/오락', 4: '병원/약국',
+            5: '뷰티/헬스', 6: '생활/쇼핑', 7: '학원/교육', 8: '숙박/여행'
+        };
+
+        let map = null;
+        let currentData = {};
+        let clickMarker = null;
+        let radiusCircle = null;
+        let storeMarkers = [];
+
+        // ============================================
+        // 지도 초기화
+        // ============================================
+        function initMap() {
+            if (map) return;
+
+            map = L.map('map', { zoomControl: false }).setView([37.5334, 127.0675], 15);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OSM &copy; CARTO',
+                maxZoom: 19
+            }).addTo(map);
+
+            L.control.zoom({ position: 'topright' }).addTo(map);
+
+            // 지도 클릭 → 자동 분석
+            map.on('click', async function(e) {
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+
+                document.getElementById('inputLat').value = lat.toFixed(6);
+                document.getElementById('inputLng').value = lng.toFixed(6);
+
+                updateClickMarker(lat, lng);
+                await fetchAllData(lat, lng);
+            });
+
+            updateClickMarker(37.5334, 127.0675);
+        }
+
+        function updateClickMarker(lat, lng) {
+            const radius = parseInt(document.getElementById('inputRadius').value) || 300;
+
+            if (clickMarker) map.removeLayer(clickMarker);
+            if (radiusCircle) map.removeLayer(radiusCircle);
+
+            radiusCircle = L.circle([lat, lng], {
+                radius: radius,
+                color: '#2563eb',
+                fillColor: '#2563eb',
+                fillOpacity: 0.1,
+                weight: 2,
+                dashArray: '5, 5'
+            }).addTo(map);
+
+            clickMarker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    html: '<div style="width:20px;height:20px;background:#ef4444;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(map);
+        }
+
+        // 반경 변경 시
+        document.getElementById('inputRadius').addEventListener('change', function() {
+            const lat = parseFloat(document.getElementById('inputLat').value);
+            const lng = parseFloat(document.getElementById('inputLng').value);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                updateClickMarker(lat, lng);
+                fetchAllData(lat, lng);
+            }
+        });
+
+        // ============================================
+        // API 호출
+        // ============================================
+        async function fetchAllData(lat, lng) {
+            showLoading(true);
+
+            try {
+                const radius = parseInt(document.getElementById('inputRadius').value) || 300;
+
+                // 병렬 API 호출
+                const [dataRes, nearbyRes] = await Promise.all([
+                    fetch(`${API_BASE}/data`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            center: { lat, lng },
+                            radius,
+                            include: {
+                                categories: { category_ids: null, include_others: false },
+                                markers: { category_ids: null, include_others: false },
+                                stores: { category_ids: null, offset: 0, limit: 200 },
+                                areas: false,
+                                overview: true
+                            }
+                        })
+                    }).then(r => r.json()),
+                    fetch(`${API_BASE}/nearby`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ lat, lng, radius: Math.max(radius, 3000), limit_per_category: 5 })
+                    }).then(r => r.json())
+                ]);
+
+                // 역지오코딩
+                let address = '-';
+                try {
+                    const geoRes = await fetch(`${API_BASE}/reverse-geocode?lat=${lat}&lng=${lng}`);
+                    const geoData = await geoRes.json();
+                    address = geoData.address || '-';
+                } catch(e) {}
+
+                currentData = {
+                    categories: dataRes.data?.categories?.items || [],
+                    markers: dataRes.data?.markers?.items || [],
+                    stores: dataRes.data?.stores?.items || [],
+                    overview: dataRes.data?.overview || {},
+                    nearby: nearbyRes,
+                    center: { lat, lng },
+                    radius,
+                    address
+                };
+
+                document.getElementById('currentAddress').value = address;
+
+                // UI 업데이트
+                updateSummary();
+                updateCategoryList();
+                updateNearbyList();
+                updateApartmentList();
+                updateMapMarkers();
+
+                map.setView([lat, lng], radius <= 500 ? 16 : radius <= 1000 ? 15 : 14);
+
+                const totalStores = currentData.categories.reduce((s, c) => s + c.count, 0);
+                showToast(`분석 완료! (${totalStores}개 매장)`, 'success');
+
+            } catch (error) {
+                showToast(`오류: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
+        // UI 업데이트
+        // ============================================
+        function updateSummary() {
+            const { categories, nearby, overview, radius } = currentData;
+            const totalStores = categories.reduce((s, c) => s + c.count, 0);
+            const subway = nearby?.subway || [];
+            const apartment = nearby?.apartment || [];
+            const totalHouseholds = nearby?.counts?.apartment_households || 0;
+
+            document.getElementById('summaryGrid').innerHTML = `
+                <div class="summary-item">
+                    <div class="value">${totalStores}</div>
+                    <div class="label">총 매장 수</div>
+                </div>
+                <div class="summary-item green">
+                    <div class="value">${categories.length}</div>
+                    <div class="label">업종 카테고리</div>
+                </div>
+                <div class="summary-item purple">
+                    <div class="value">${subway.length}</div>
+                    <div class="label">인근 지하철</div>
+                </div>
+                <div class="summary-item yellow">
+                    <div class="value">${apartment.length}</div>
+                    <div class="label">인근 아파트</div>
+                </div>
+                <div class="summary-item">
+                    <div class="value">${totalHouseholds.toLocaleString()}</div>
+                    <div class="label">총 세대수</div>
+                </div>
+                <div class="summary-item red">
+                    <div class="value">${radius}m</div>
+                    <div class="label">분석 반경</div>
+                </div>
+            `;
+        }
+
+        function updateCategoryList() {
+            const { categories, stores } = currentData;
+            const container = document.getElementById('categoryList');
+
+            if (!categories.length) {
+                container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">데이터 없음</div>';
+                return;
+            }
+
+            // 카테고리별 매장 그룹핑
+            const storesByCategory = {};
+            (stores || []).forEach(store => {
+                const catId = store.category_id;
+                if (!storesByCategory[catId]) storesByCategory[catId] = [];
+                storesByCategory[catId].push(store);
+            });
+
+            container.innerHTML = categories.map(cat => {
+                const catStores = storesByCategory[cat.id] || [];
+                const storeListHTML = catStores.length > 0
+                    ? catStores.slice(0, 20).map(s => `
+                        <div class="store-item">
+                            <span class="store-name">${s.name || '이름없음'}</span>
+                            <span class="store-address">${s.road_address || s.address || ''}</span>
+                        </div>
+                    `).join('') + (catStores.length > 20 ? `<div class="store-item" style="color:#888;justify-content:center;">... 외 ${catStores.length - 20}개</div>` : '')
+                    : '<div class="store-item" style="color:#888;justify-content:center;">상세 정보 없음</div>';
+
+                return `
+                    <div class="category-item" data-cat="${cat.id}">
+                        <div class="category-header" onclick="toggleCategory(${cat.id})">
+                            <div class="category-color" style="background: ${cat.color}"></div>
+                            <div class="category-name">${cat.name}</div>
+                            <div class="category-count">${cat.count}개</div>
+                            <div class="category-arrow">▼</div>
+                        </div>
+                        <div class="category-stores">
+                            ${storeListHTML}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCategory(catId) {
+            const item = document.querySelector(`.category-item[data-cat="${catId}"]`);
+            if (item) item.classList.toggle('open');
+        }
+
+        function updateNearbyList() {
+            const nearby = currentData.nearby || {};
+            const container = document.getElementById('nearbyList');
+            const items = [];
+
+            (nearby.subway || []).forEach(item => {
+                const lines = item.line_colors?.map(l => `<span style="color:${l.color};font-weight:600;">${l.name}</span>`).join(' ') || '';
+                items.push({ icon: '🚇', iconBg: 'rgba(37,99,235,0.1)', name: item.name, detail: lines, distance: item.distance });
+            });
+
+            (nearby.university || []).forEach(item => {
+                items.push({ icon: '🎓', iconBg: 'rgba(139,92,246,0.1)', name: item.name, detail: item.subcategory || '', distance: item.distance });
+            });
+
+            (nearby.hospital || []).forEach(item => {
+                items.push({ icon: '🏥', iconBg: 'rgba(239,68,68,0.1)', name: item.name, detail: item.subcategory || '', distance: item.distance });
+            });
+
+            (nearby.market || []).forEach(item => {
+                items.push({ icon: '🛒', iconBg: 'rgba(245,158,11,0.1)', name: item.name, detail: `${item.detail || '-'}개 점포`, distance: item.distance });
+            });
+
+            if (!items.length) {
+                container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">데이터 없음</div>';
+                return;
+            }
+
+            items.sort((a, b) => a.distance - b.distance);
+
+            container.innerHTML = items.slice(0, 10).map(item => `
+                <div class="nearby-item">
+                    <div class="nearby-icon" style="background: ${item.iconBg}">${item.icon}</div>
+                    <div class="nearby-info">
+                        <div class="nearby-name">${item.name}</div>
+                        <div class="nearby-detail">${item.detail}</div>
+                    </div>
+                    <div class="nearby-distance">${item.distance}m</div>
+                </div>
+            `).join('');
+        }
+
+        function updateApartmentList() {
+            const nearby = currentData.nearby || {};
+            const apartments = nearby.apartment || [];
+            const container = document.getElementById('apartmentList');
+
+            if (!apartments.length) {
+                container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">인근 아파트 없음</div>';
+                return;
+            }
+
+            container.innerHTML = apartments.slice(0, 5).map(apt => `
+                <div class="nearby-item">
+                    <div class="nearby-icon" style="background: rgba(16,185,129,0.1)">🏠</div>
+                    <div class="nearby-info">
+                        <div class="nearby-name">${apt.name}</div>
+                        <div class="nearby-detail">${apt.detail || '-'}세대</div>
+                    </div>
+                    <div class="nearby-distance">${apt.distance}m</div>
+                </div>
+            `).join('');
+        }
+
+        function updateMapMarkers() {
+            storeMarkers.forEach(m => map.removeLayer(m));
+            storeMarkers = [];
+
+            const { markers, nearby } = currentData;
+
+            (markers || []).forEach(m => {
+                const color = CATEGORY_COLORS[m.category_id] || '#888';
+                const size = Math.min(6 + m.count * 2, 20);
+
+                const marker = L.circleMarker([m.lat, m.lng], {
+                    radius: size,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 1,
+                    fillOpacity: 0.8
+                }).addTo(map).bindPopup(`
+                    <div style="font-size:13px;">
+                        <b style="color:${color};">${CATEGORY_NAMES[m.category_id] || '기타'}</b><br>
+                        <span>${m.count}개 매장</span>
+                    </div>
+                `);
+                storeMarkers.push(marker);
+            });
+
+            (nearby?.subway || []).forEach(s => {
+                const marker = L.circleMarker([s.lat, s.lng], {
+                    radius: 10, fillColor: '#2563eb', color: '#fff', weight: 2, fillOpacity: 0.9
+                }).addTo(map).bindPopup(`<b>🚇 ${s.name}</b><br>${s.distance}m`);
+                storeMarkers.push(marker);
+            });
+        }
+
+        // ============================================
+        // 유틸리티
+        // ============================================
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('show', show);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => toast.className = 'toast', 3000);
+        }
+
+        window.onload = function() {
+            initMap();
+        };
+    </script>
+</body>
+</html>
