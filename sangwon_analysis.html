@@ -174,7 +174,7 @@
             transition: max-height 0.3s ease;
             background: var(--bg);
         }
-        .category-item.open .category-stores { max-height: 500px; overflow-y: auto; }
+        .category-item.open .category-stores { max-height: 800px; overflow-y: auto; }
         .store-item {
             padding: 10px 16px;
             border-top: 1px solid var(--border);
@@ -314,7 +314,7 @@
             </div>
             <div class="control-group">
                 <label>반경 (m)</label>
-                <input type="number" id="inputRadius" value="300" min="100" max="5000" step="100" style="width:100px;">
+                <input type="number" id="inputRadius" value="200" min="100" max="5000" step="100" style="width:100px;">
             </div>
             <div class="control-group">
                 <label>현재 주소</label>
@@ -418,7 +418,7 @@
         }
 
         function updateClickMarker(lat, lng) {
-            const radius = parseInt(document.getElementById('inputRadius').value) || 300;
+            const radius = parseInt(document.getElementById('inputRadius').value) || 200;
 
             if (clickMarker) map.removeLayer(clickMarker);
             if (radiusCircle) map.removeLayer(radiusCircle);
@@ -459,7 +459,7 @@
             showLoading(true);
 
             try {
-                const radius = parseInt(document.getElementById('inputRadius').value) || 300;
+                const radius = parseInt(document.getElementById('inputRadius').value) || 200;
 
                 // 병렬 API 호출
                 const [dataRes, nearbyRes] = await Promise.all([
@@ -573,23 +573,25 @@
                 return;
             }
 
-            // 카테고리별 매장 그룹핑
+            // 카테고리별 매장 그룹핑 (markers 데이터 사용 - category_id 있음)
+            const { markers } = currentData;
             const storesByCategory = {};
-            (stores || []).forEach(store => {
-                const catId = store.category_id;
+            (markers || []).forEach(m => {
+                const catId = m.category_id;
                 if (!storesByCategory[catId]) storesByCategory[catId] = [];
-                storesByCategory[catId].push(store);
+                storesByCategory[catId].push(m);
             });
 
             container.innerHTML = categories.map(cat => {
                 const catStores = storesByCategory[cat.id] || [];
                 const storeListHTML = catStores.length > 0
-                    ? catStores.slice(0, 20).map(s => `
+                    ? catStores.map(s => `
                         <div class="store-item">
                             <span class="store-name">${s.name || '이름없음'}</span>
-                            <span class="store-address">${s.road_address || s.address || ''}</span>
+                            <span class="store-address">${s.category || ''}</span>
+                            <span class="store-distance" style="font-size:0.75rem;color:#888;">${s.lat?.toFixed(4)}, ${s.lng?.toFixed(4)}</span>
                         </div>
-                    `).join('') + (catStores.length > 20 ? `<div class="store-item" style="color:#888;justify-content:center;">... 외 ${catStores.length - 20}개</div>` : '')
+                    `).join('')
                     : '<div class="store-item" style="color:#888;justify-content:center;">상세 정보 없음</div>';
 
                 return `
@@ -608,9 +610,20 @@
             }).join('');
         }
 
+        // 열려있는 카테고리 추적
+        let openCategories = new Set();
+
         function toggleCategory(catId) {
             const item = document.querySelector(`.category-item[data-cat="${catId}"]`);
-            if (item) item.classList.toggle('open');
+            if (item) {
+                item.classList.toggle('open');
+                if (item.classList.contains('open')) {
+                    openCategories.add(catId);
+                } else {
+                    openCategories.delete(catId);
+                }
+                updateMapMarkers();
+            }
         }
 
         function updateNearbyList() {
@@ -682,25 +695,28 @@
 
             const { markers, nearby } = currentData;
 
+            // 열려있는 카테고리의 마커만 표시
             (markers || []).forEach(m => {
+                if (openCategories.size === 0 || !openCategories.has(m.category_id)) return;
+
                 const color = CATEGORY_COLORS[m.category_id] || '#888';
-                const size = Math.min(6 + m.count * 2, 20);
 
                 const marker = L.circleMarker([m.lat, m.lng], {
-                    radius: size,
+                    radius: 8,
                     fillColor: color,
                     color: '#fff',
-                    weight: 1,
-                    fillOpacity: 0.8
+                    weight: 2,
+                    fillOpacity: 0.9
                 }).addTo(map).bindPopup(`
                     <div style="font-size:13px;">
-                        <b style="color:${color};">${CATEGORY_NAMES[m.category_id] || '기타'}</b><br>
-                        <span>${m.count}개 매장</span>
+                        <b style="color:${color};">${m.name || '매장'}</b><br>
+                        <span style="color:#666;">${m.category || ''}</span>
                     </div>
                 `);
                 storeMarkers.push(marker);
             });
 
+            // 지하철역은 항상 표시
             (nearby?.subway || []).forEach(s => {
                 const marker = L.circleMarker([s.lat, s.lng], {
                     radius: 10, fillColor: '#2563eb', color: '#fff', weight: 2, fillOpacity: 0.9
