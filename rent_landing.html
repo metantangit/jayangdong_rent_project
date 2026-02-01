@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>자양역 5분, 41평 프리미엄 공간 임대</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #666;
+            --accent: #c9a87c;
+            --bg: #fafafa;
+            --white: #ffffff;
+            --border: #e5e5e5;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--primary);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 24px;
+            background: linear-gradient(180deg, #f5f5f5 0%, #fafafa 100%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .hero h1 strong {
+            font-weight: 600;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--secondary);
+            margin-bottom: 40px;
+        }
+
+        .hero-specs {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 50px;
+            justify-content: center;
+        }
+
+        .spec-item {
+            text-align: center;
+        }
+
+        .spec-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .spec-label {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        .scroll-indicator {
+            margin-top: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            transform: rotate(45deg);
+            margin: 0 auto;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(8px); }
+            60% { transform: translateY(4px); }
+        }
+
+        /* Section Common */
+        section {
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .section-desc {
+            text-align: center;
+            color: var(--secondary);
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* Space Info */
+        .space-info {
+            background: var(--white);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-card {
+            padding: 24px 16px;
+            background: var(--bg);
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .info-card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .info-card p {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            line-height: 1.5;
+        }
+
+        /* Possibilities - 풀스크린 이미지 */
+        .possibilities {
+            background: var(--bg);
+            padding: 60px 0;
+        }
+
+        .possibilities .container {
+            padding: 0 20px;
+        }
+
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            aspect-ratio: 4/5;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 60px 24px 24px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: var(--white);
+        }
+
+        .gallery-overlay h4 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .gallery-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Rent Info */
+        .rent-info {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .rent-info .section-title,
+        .rent-info .section-desc {
+            color: var(--white);
+        }
+
+        .rent-info .section-desc {
+            opacity: 0.7;
+        }
+
+        .rent-table {
+            max-width: 100%;
+        }
+
+        .rent-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .rent-row:last-child {
+            border-bottom: none;
+        }
+
+        .rent-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        .rent-value {
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-align: right;
+        }
+
+        .rent-value.highlight {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* CTA */
+        .cta {
+            background: var(--white);
+            text-align: center;
+            padding-bottom: 80px;
+        }
+
+        .cta-box {
+            background: var(--bg);
+            padding: 40px 24px;
+            border-radius: 16px;
+        }
+
+        .cta-phone {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 16px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .cta-phone a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .cta-note {
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        .cta-btn {
+            display: block;
+            margin-top: 24px;
+            padding: 18px 40px;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .cta-btn:active {
+            background: #333;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 20px 40px;
+            text-align: center;
+            background: var(--bg);
+            color: var(--secondary);
+            font-size: 0.8rem;
+        }
+
+        footer .address {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* 데스크탑 */
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-specs {
+                gap: 50px;
+            }
+
+            .spec-value {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                max-width: 600px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .info-grid {
+                gap: 20px;
+            }
+
+            .info-card {
+                padding: 32px 20px;
+            }
+
+            .gallery-item {
+                aspect-ratio: 16/10;
+            }
+
+            .gallery-overlay h4 {
+                font-size: 1.5rem;
+            }
+
+            .cta-phone {
+                font-size: 2rem;
+            }
+
+            .cta-btn {
+                display: inline-block;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">SPACE FOR RENT</div>
+        <h1><strong>당신의 이야기</strong>는<br>여기서 시작됩니다</h1>
+        <p class="hero-subtitle">자양역 5분 · 41평 · 자유로운 설계</p>
+
+        <div class="hero-specs">
+            <div class="spec-item">
+                <div class="spec-value">41평</div>
+                <div class="spec-label">전용면적</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">5분</div>
+                <div class="spec-label">자양역 도보</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">즉시</div>
+                <div class="spec-label">입점 가능</div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Space Info -->
+    <section class="space-info">
+        <div class="container">
+            <h2 class="section-title">공간의 특징</h2>
+            <p class="section-desc">당신의 비전을 담을 준비가 된 공간</p>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-card-icon">🚇</div>
+                    <h3>역세권</h3>
+                    <p>자양역 도보 5분<br>뛰어난 접근성</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">📐</div>
+                    <h3>넓은 공간</h3>
+                    <p>41평의 여유<br>다양한 레이아웃</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">🎨</div>
+                    <h3>자유 설계</h3>
+                    <p>올철거 완료<br>원하는 대로</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">🏢</div>
+                    <h3>대로변</h3>
+                    <p>간판 시인성<br>홍보 효과</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Possibilities -->
+    <section class="possibilities">
+        <div class="container">
+            <h2 class="section-title">무한한 가능성</h2>
+            <p class="section-desc">이 공간이 될 수 있는 모습들</p>
+        </div>
+
+        <div class="container">
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 001.png" alt="필라테스 스튜디오">
+                    <div class="gallery-overlay">
+                        <h4>필라테스 · 요가</h4>
+                        <p>넓은 공간에서 프리미엄 웰니스 경험을 선사하세요</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 002.png" alt="바 라운지">
+                    <div class="gallery-overlay">
+                        <h4>바 · 라운지</h4>
+                        <p>분위기 있는 나만의 아지트를 만들어보세요</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 003.png" alt="쿠킹 클래스">
+                    <div class="gallery-overlay">
+                        <h4>쿠킹 클래스 · 공방</h4>
+                        <p>함께 만들고 나누는 특별한 경험의 공간</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 004.png" alt="라이프스타일 숍">
+                    <div class="gallery-overlay">
+                        <h4>라이프스타일 숍</h4>
+                        <p>감각적인 큐레이션으로 채워지는 공간</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 005.png" alt="아트 갤러리">
+                    <div class="gallery-overlay">
+                        <h4>아트 갤러리</h4>
+                        <p>예술이 숨쉬는 문화 공간으로 탄생시키세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rent Info -->
+    <section class="rent-info">
+        <div class="container">
+            <h2 class="section-title">임대 조건</h2>
+            <p class="section-desc">합리적인 조건으로 시작하세요</p>
+
+            <div class="rent-table">
+                <div class="rent-row">
+                    <span class="rent-label">위치</span>
+                    <span class="rent-value">자양동 능동로31, 2층</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">면적</span>
+                    <span class="rent-value">41평 (전용)</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">보증금</span>
+                    <span class="rent-value highlight">5,000만원</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">월세</span>
+                    <span class="rent-value highlight">250만원</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">관리비</span>
+                    <span class="rent-value">협의</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">입점 가능</span>
+                    <span class="rent-value">즉시 가능</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2 class="section-title">문의하기</h2>
+                <p class="section-desc">궁금한 점이 있으시면 연락주세요</p>
+
+                <div class="cta-phone">
+                    <a href="tel:010-0000-0000">010-0000-0000</a>
+                </div>
+                <p class="cta-note">평일 09:00 - 18:00</p>
+
+                <a href="tel:010-0000-0000" class="cta-btn">전화 문의하기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="address">서울특별시 광진구 자양동 553-264<br>(능동로31) 2층</p>
+        <p>© 2026 All rights reserved.</p>
+    </footer>
+</body>
+</html>
