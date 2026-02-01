@@ -232,31 +232,24 @@
             line-height: 1.5;
         }
 
-        /* Rent Info */
+        /* Rent Info - 모던/미니멀 */
         .rent-info {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .rent-info .section-title,
-        .rent-info .section-desc {
-            color: var(--white);
-        }
-
-        .rent-info .section-desc {
-            opacity: 0.7;
+            background: var(--bg);
         }
 
         .rent-table {
-            max-width: 100%;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 8px 0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         .rent-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
         }
 
         .rent-row:last-child {
@@ -264,7 +257,7 @@
         }
 
         .rent-label {
-            color: rgba(255,255,255,0.6);
+            color: var(--secondary);
             font-size: 0.9rem;
         }
 
@@ -272,11 +265,12 @@
             font-weight: 500;
             font-size: 0.95rem;
             text-align: right;
+            color: var(--primary);
         }
 
         .rent-value.highlight {
-            color: var(--accent);
-            font-size: 1.2rem;
+            color: var(--primary);
+            font-size: 1.15rem;
             font-weight: 600;
         }
 
@@ -340,6 +334,55 @@
         footer .address {
             margin-bottom: 8px;
             line-height: 1.6;
+        }
+
+        /* 이미지 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .modal-caption {
+            color: white;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 1rem;
         }
 
         /* 데스크탑 */
@@ -453,6 +496,41 @@
         </div>
     </section>
 
+    <!-- Rent Info -->
+    <section class="rent-info">
+        <div class="container">
+            <h2 class="section-title">임대 조건</h2>
+            <p class="section-desc">합리적인 조건으로 시작하세요</p>
+
+            <div class="rent-table">
+                <div class="rent-row">
+                    <span class="rent-label">위치</span>
+                    <span class="rent-value">자양동 능동로31, 2층</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">면적</span>
+                    <span class="rent-value">41평 (전용)</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">보증금</span>
+                    <span class="rent-value highlight">5,000만원</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">월세</span>
+                    <span class="rent-value highlight">250만원</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">관리비</span>
+                    <span class="rent-value">협의</span>
+                </div>
+                <div class="rent-row">
+                    <span class="rent-label">입점 가능</span>
+                    <span class="rent-value">즉시 가능</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Possibilities -->
     <section class="possibilities">
         <div class="container">
@@ -505,41 +583,6 @@
         </div>
     </section>
 
-    <!-- Rent Info -->
-    <section class="rent-info">
-        <div class="container">
-            <h2 class="section-title">임대 조건</h2>
-            <p class="section-desc">합리적인 조건으로 시작하세요</p>
-
-            <div class="rent-table">
-                <div class="rent-row">
-                    <span class="rent-label">위치</span>
-                    <span class="rent-value">자양동 능동로31, 2층</span>
-                </div>
-                <div class="rent-row">
-                    <span class="rent-label">면적</span>
-                    <span class="rent-value">41평 (전용)</span>
-                </div>
-                <div class="rent-row">
-                    <span class="rent-label">보증금</span>
-                    <span class="rent-value highlight">5,000만원</span>
-                </div>
-                <div class="rent-row">
-                    <span class="rent-label">월세</span>
-                    <span class="rent-value highlight">250만원</span>
-                </div>
-                <div class="rent-row">
-                    <span class="rent-label">관리비</span>
-                    <span class="rent-value">협의</span>
-                </div>
-                <div class="rent-row">
-                    <span class="rent-label">입점 가능</span>
-                    <span class="rent-value">즉시 가능</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- CTA -->
     <section class="cta">
         <div class="container">
@@ -562,5 +605,49 @@
         <p class="address">서울특별시 광진구 자양동 553-264<br>(능동로31) 2층</p>
         <p>© 2026 All rights reserved.</p>
     </footer>
+
+    <!-- 이미지 모달 -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">✕</span>
+            <img id="modalImage" src="" alt="">
+            <p class="modal-caption" id="modalCaption"></p>
+        </div>
+    </div>
+
+    <script>
+        // 갤러리 이미지 클릭 이벤트
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const img = this.querySelector('img');
+                const title = this.querySelector('h4').textContent;
+
+                document.getElementById('modalImage').src = img.src;
+                document.getElementById('modalCaption').textContent = title;
+                document.getElementById('imageModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 배경 클릭 시 닫기
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 키로 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
