@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light only">
     <meta name="supported-color-schemes" content="light only">
-    <title>자양역 5분, 41평 프리미엄 공간 임대</title>
+    <title>자양역 5분, 40평 치과 전용 공간 임대</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
 
@@ -182,6 +182,25 @@
             line-height: 1.5;
         }
 
+        /* Video Section */
+        .video-section {
+            background: var(--bg);
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         /* Possibilities - 풀스크린 이미지 */
         .possibilities {
             background: var(--bg);
@@ -275,6 +294,12 @@
             color: var(--primary);
             font-size: 1.15rem;
             font-weight: 600;
+        }
+
+        .rent-value.special {
+            color: #c9a87c;
+            font-size: 1.15rem;
+            font-weight: 700;
         }
 
         /* CTA */
@@ -444,13 +469,13 @@
 <body>
     <!-- Hero -->
     <section class="hero">
-        <div class="hero-badge">SPACE FOR RENT</div>
-        <h1><strong>당신의 이야기</strong>는<br>여기서 시작됩니다</h1>
-        <p class="hero-subtitle">자양역 5분 · 41평 · 자유로운 설계</p>
+        <div class="hero-badge">DENTAL CLINIC</div>
+        <h1><strong>치과 개원</strong>을 위한<br>최적의 공간</h1>
+        <p class="hero-subtitle">자양역 5분 · 40평 · 렌트프리 3개월</p>
 
         <div class="hero-specs">
             <div class="spec-item">
-                <div class="spec-value">41평</div>
+                <div class="spec-value">40평</div>
                 <div class="spec-label">전용면적</div>
             </div>
             <div class="spec-item">
@@ -458,8 +483,8 @@
                 <div class="spec-label">자양역 도보</div>
             </div>
             <div class="spec-item">
-                <div class="spec-value">즉시</div>
-                <div class="spec-label">입점 가능</div>
+                <div class="spec-value">3개월</div>
+                <div class="spec-label">렌트프리</div>
             </div>
         </div>
 
@@ -472,18 +497,18 @@
     <section class="space-info">
         <div class="container">
             <h2 class="section-title">공간의 특징</h2>
-            <p class="section-desc">당신의 비전을 담을 준비가 된 공간</p>
+            <p class="section-desc">치과 개원에 최적화된 환경</p>
 
             <div class="info-grid">
                 <div class="info-card">
                     <div class="info-card-icon">🚇</div>
                     <h3>역세권</h3>
-                    <p>자양역 도보 5분<br>뛰어난 접근성</p>
+                    <p>자양역 도보 5분<br>환자 접근성 우수</p>
                 </div>
                 <div class="info-card">
                     <div class="info-card-icon">📐</div>
                     <h3>넓은 공간</h3>
-                    <p>41평의 여유<br>다양한 레이아웃</p>
+                    <p>40평의 여유<br>진료실 4개 이상</p>
                 </div>
                 <div class="info-card">
                     <div class="info-card-icon">🎨</div>
@@ -495,6 +520,21 @@
                     <h3>대로변</h3>
                     <p>간판 시인성<br>홍보 효과</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="container">
+            <h2 class="section-title">최고의 치과의를 모십니다</h2>
+            <p class="section-desc">당신의 치과가 될 공간입니다</p>
+
+            <div class="video-wrapper">
+                <video controls playsinline>
+                    <source src="jayang_dentist.mp4" type="video/mp4">
+                    브라우저가 비디오 재생을 지원하지 않습니다.
+                </video>
             </div>
         </div>
     </section>
@@ -512,7 +552,7 @@
                 </div>
                 <div class="rent-row">
                     <span class="rent-label">면적</span>
-                    <span class="rent-value">41평 (전용)</span>
+                    <span class="rent-value">40평 (전용)</span>
                 </div>
                 <div class="rent-row">
                     <span class="rent-label">보증금</span>
@@ -523,64 +563,16 @@
                     <span class="rent-value highlight">250만원</span>
                 </div>
                 <div class="rent-row">
+                    <span class="rent-label">렌트프리</span>
+                    <span class="rent-value special">3개월</span>
+                </div>
+                <div class="rent-row">
                     <span class="rent-label">관리비</span>
                     <span class="rent-value">협의</span>
                 </div>
                 <div class="rent-row">
                     <span class="rent-label">입점 가능</span>
                     <span class="rent-value">즉시 가능</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Possibilities -->
-    <section class="possibilities">
-        <div class="container">
-            <h2 class="section-title">무한한 가능성</h2>
-            <p class="section-desc">이 공간이 될 수 있는 모습들</p>
-        </div>
-
-        <div class="container">
-            <div class="gallery">
-                <div class="gallery-item">
-                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 001.png" alt="필라테스 스튜디오">
-                    <div class="gallery-overlay">
-                        <h4>필라테스 · 요가</h4>
-                        <p>넓은 공간에서 프리미엄 웰니스 경험을 선사하세요</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 002.png" alt="바 라운지">
-                    <div class="gallery-overlay">
-                        <h4>바 · 라운지</h4>
-                        <p>분위기 있는 나만의 아지트를 만들어보세요</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 003.png" alt="쿠킹 클래스">
-                    <div class="gallery-overlay">
-                        <h4>쿠킹 클래스 · 공방</h4>
-                        <p>함께 만들고 나누는 특별한 경험의 공간</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 004.png" alt="라이프스타일 숍">
-                    <div class="gallery-overlay">
-                        <h4>라이프스타일 숍</h4>
-                        <p>감각적인 큐레이션으로 채워지는 공간</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="data/rent_offer_paper/KakaoTalk_Photo_2026-02-01-21-40-14 005.png" alt="아트 갤러리">
-                    <div class="gallery-overlay">
-                        <h4>아트 갤러리</h4>
-                        <p>예술이 숨쉬는 문화 공간으로 탄생시키세요</p>
-                    </div>
                 </div>
             </div>
         </div>
