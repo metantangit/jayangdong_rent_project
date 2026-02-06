@@ -6,6 +6,16 @@
     <meta name="color-scheme" content="light only">
     <meta name="supported-color-schemes" content="light only">
     <title>자양역 5분, 40평 치과 전용 공간 임대</title>
+
+    <!-- Google Analytics 4 -->
+    <!-- TODO: G-XT1H1Z69G2를 실제 GA4 측정 ID로 교체하세요 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XT1H1Z69G2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XT1H1Z69G2');
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
 
@@ -643,6 +653,389 @@
                 closeModal();
             }
         });
+
+        // ============================================
+        // GA4 풀 추적 (측정 가능한 모든 것)
+        // ============================================
+
+        (function() {
+            var pageLoadTime = Date.now();
+            var firstInteraction = false;
+            var maxScrollPercent = 0;
+            var activeTime = 0;
+            var activeInterval = null;
+            var isPageVisible = true;
+
+            // --- 유틸 ---
+            function trackEvent(name, params) {
+                if (typeof gtag === 'function') gtag('event', name, params || {});
+            }
+
+            function trackFirstInteraction(type) {
+                if (firstInteraction) return;
+                firstInteraction = true;
+                trackEvent('first_interaction', {
+                    interaction_type: type,
+                    time_to_interact_sec: Math.round((Date.now() - pageLoadTime) / 1000)
+                });
+            }
+
+            // =========================================
+            // 1. 페이지 로드 성능
+            // =========================================
+            window.addEventListener('load', function() {
+                var perf = performance.getEntriesByType('navigation')[0];
+                if (perf) {
+                    trackEvent('page_performance', {
+                        dns_ms: Math.round(perf.domainLookupEnd - perf.domainLookupStart),
+                        connect_ms: Math.round(perf.connectEnd - perf.connectStart),
+                        ttfb_ms: Math.round(perf.responseStart - perf.requestStart),
+                        dom_ready_ms: Math.round(perf.domContentLoadedEventEnd - perf.startTime),
+                        full_load_ms: Math.round(perf.loadEventEnd - perf.startTime)
+                    });
+                }
+            });
+
+            // =========================================
+            // 2. 방문자 유형 (신규 vs 재방문)
+            // =========================================
+            var visitCount = parseInt(localStorage.getItem('dentist_visits') || '0') + 1;
+            localStorage.setItem('dentist_visits', visitCount);
+            var lastVisit = localStorage.getItem('dentist_last_visit');
+            localStorage.setItem('dentist_last_visit', new Date().toISOString());
+
+            trackEvent('visitor_info', {
+                visitor_type: visitCount === 1 ? 'new' : 'returning',
+                visit_count: visitCount,
+                days_since_last: lastVisit ? Math.round((Date.now() - new Date(lastVisit).getTime()) / 86400000) : 0
+            });
+
+            // =========================================
+            // 3. 기기 & 환경 정보
+            // =========================================
+            var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            trackEvent('device_info', {
+                screen_width: screen.width,
+                screen_height: screen.height,
+                viewport_width: window.innerWidth,
+                viewport_height: window.innerHeight,
+                pixel_ratio: window.devicePixelRatio || 1,
+                orientation: screen.orientation ? screen.orientation.type : (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'),
+                connection_type: conn ? conn.effectiveType : 'unknown',
+                language: navigator.language,
+                platform: navigator.platform,
+                touch_support: 'ontouchstart' in window
+            });
+
+            // =========================================
+            // 4. UTM 파라미터 캡처 (광고 효과 측정)
+            // =========================================
+            var urlParams = new URLSearchParams(window.location.search);
+            var utmSource = urlParams.get('utm_source');
+            if (utmSource) {
+                trackEvent('campaign_visit', {
+                    utm_source: utmSource,
+                    utm_medium: urlParams.get('utm_medium') || '',
+                    utm_campaign: urlParams.get('utm_campaign') || '',
+                    utm_term: urlParams.get('utm_term') || '',
+                    utm_content: urlParams.get('utm_content') || ''
+                });
+            }
+
+            // =========================================
+            // 5. 전화 버튼 클릭
+            // =========================================
+            document.querySelectorAll('a[href^="tel:"]').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    trackFirstInteraction('phone_click');
+                    trackEvent('phone_click', {
+                        event_category: 'conversion',
+                        button_location: this.closest('section') ? this.closest('section').className : 'unknown',
+                        time_on_page_sec: Math.round((Date.now() - pageLoadTime) / 1000),
+                        scroll_depth_at_click: maxScrollPercent
+                    });
+                });
+            });
+
+            // =========================================
+            // 6. 비디오 추적 (재생/일시정지/진행률/완료)
+            // =========================================
+            var video = document.querySelector('video');
+            if (video) {
+                var videoStarted = false;
+                var videoProgressMarks = {25: false, 50: false, 75: false};
+
+                video.addEventListener('play', function() {
+                    trackFirstInteraction('video_play');
+                    if (!videoStarted) {
+                        trackEvent('video_start', {
+                            time_to_play_sec: Math.round((Date.now() - pageLoadTime) / 1000)
+                        });
+                        videoStarted = true;
+                    }
+                });
+
+                video.addEventListener('pause', function() {
+                    if (!video.ended) {
+                        trackEvent('video_pause', {
+                            paused_at_sec: Math.round(video.currentTime),
+                            video_percent: Math.round((video.currentTime / video.duration) * 100)
+                        });
+                    }
+                });
+
+                video.addEventListener('timeupdate', function() {
+                    if (!video.duration) return;
+                    var pct = Math.round((video.currentTime / video.duration) * 100);
+                    [25, 50, 75].forEach(function(mark) {
+                        if (pct >= mark && !videoProgressMarks[mark]) {
+                            videoProgressMarks[mark] = true;
+                            trackEvent('video_progress', {
+                                milestone: mark + '%',
+                                value: mark
+                            });
+                        }
+                    });
+                });
+
+                video.addEventListener('ended', function() {
+                    trackEvent('video_complete', {
+                        duration_sec: Math.round(video.duration)
+                    });
+                });
+            }
+
+            // =========================================
+            // 7. 스크롤 깊이 (10% 단위 세밀 추적)
+            // =========================================
+            var scrollMarks = {};
+            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100].forEach(function(m) { scrollMarks[m] = false; });
+
+            window.addEventListener('scroll', function() {
+                var scrollTop = window.scrollY;
+                var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                if (docHeight <= 0) return;
+                var pct = Math.round((scrollTop / docHeight) * 100);
+                if (pct > maxScrollPercent) maxScrollPercent = pct;
+
+                [10, 20, 30, 40, 50, 60, 70, 80, 90, 100].forEach(function(mark) {
+                    if (pct >= mark && !scrollMarks[mark]) {
+                        scrollMarks[mark] = true;
+                        trackEvent('scroll_depth', {
+                            percent: mark,
+                            time_to_scroll_sec: Math.round((Date.now() - pageLoadTime) / 1000)
+                        });
+                    }
+                });
+
+                trackFirstInteraction('scroll');
+            });
+
+            // =========================================
+            // 8. 각 섹션 체류 시간 (어디서 오래 봤는지)
+            // =========================================
+            var sectionNames = {
+                '.hero': 'hero',
+                '.space-info': 'space_info',
+                '.video-section': 'video_section',
+                '.rent-info': 'rent_info',
+                '.cta': 'cta'
+            };
+            var sectionTimers = {};
+            var sectionReported = {};
+
+            Object.keys(sectionNames).forEach(function(selector) {
+                var el = document.querySelector(selector);
+                if (!el) return;
+                var name = sectionNames[selector];
+                sectionTimers[name] = 0;
+                sectionReported[name] = false;
+
+                var obs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            if (!sectionReported[name]) {
+                                trackEvent('section_view', {
+                                    section: name,
+                                    time_to_view_sec: Math.round((Date.now() - pageLoadTime) / 1000)
+                                });
+                                sectionReported[name] = true;
+                            }
+                            el._viewStart = Date.now();
+                        } else if (el._viewStart) {
+                            sectionTimers[name] += Date.now() - el._viewStart;
+                            el._viewStart = null;
+                        }
+                    });
+                }, {threshold: 0.3});
+                obs.observe(el);
+            });
+
+            // =========================================
+            // 9. 이미지 모달 열기 추적
+            // =========================================
+            document.querySelectorAll('.gallery-item').forEach(function(item, idx) {
+                item.addEventListener('click', function() {
+                    var title = (this.querySelector('h4') || {}).textContent || '';
+                    trackFirstInteraction('image_view');
+                    trackEvent('image_modal_open', {
+                        image_index: idx,
+                        image_title: title
+                    });
+                });
+            });
+
+            // =========================================
+            // 10. 텍스트 복사 추적 (전화번호, 주소 복사)
+            // =========================================
+            document.addEventListener('copy', function() {
+                var sel = window.getSelection().toString().trim();
+                if (sel.length > 0) {
+                    trackEvent('text_copy', {
+                        copied_text: sel.substring(0, 100),
+                        page_section: document.activeElement ? document.activeElement.closest('section') ?
+                            document.activeElement.closest('section').className : 'unknown' : 'unknown'
+                    });
+                }
+            });
+
+            // =========================================
+            // 11. 체류 시간 마일스톤 (실제 활성 시간)
+            // =========================================
+            activeInterval = setInterval(function() {
+                if (isPageVisible) activeTime++;
+            }, 1000);
+
+            var timeMilestones = {15: false, 30: false, 60: false, 120: false, 300: false};
+            setInterval(function() {
+                [15, 30, 60, 120, 300].forEach(function(sec) {
+                    if (activeTime >= sec && !timeMilestones[sec]) {
+                        timeMilestones[sec] = true;
+                        trackEvent('time_on_page', {
+                            milestone_sec: sec,
+                            milestone_label: sec < 60 ? sec + 's' : Math.round(sec / 60) + 'min',
+                            max_scroll: maxScrollPercent
+                        });
+                    }
+                });
+            }, 1000);
+
+            // =========================================
+            // 12. 페이지 가시성 (탭 전환 감지)
+            // =========================================
+            var hiddenStart = null;
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    isPageVisible = false;
+                    hiddenStart = Date.now();
+                } else {
+                    isPageVisible = true;
+                    if (hiddenStart) {
+                        var hiddenDuration = Math.round((Date.now() - hiddenStart) / 1000);
+                        trackEvent('tab_return', {
+                            hidden_duration_sec: hiddenDuration
+                        });
+                        hiddenStart = null;
+                    }
+                }
+            });
+
+            // =========================================
+            // 13. 이탈 의도 감지 (데스크탑: 마우스가 위로)
+            // =========================================
+            var exitIntentFired = false;
+            document.addEventListener('mouseout', function(e) {
+                if (exitIntentFired) return;
+                if (e.clientY < 5 && e.relatedTarget == null) {
+                    exitIntentFired = true;
+                    trackEvent('exit_intent', {
+                        time_on_page_sec: Math.round((Date.now() - pageLoadTime) / 1000),
+                        max_scroll: maxScrollPercent,
+                        phone_clicked: document.querySelector('a[href^="tel:"]._tracked') ? true : false
+                    });
+                }
+            });
+
+            // =========================================
+            // 14. 레이지 클릭 감지 (불만/혼란 표시)
+            // =========================================
+            var clickTimes = [];
+            document.addEventListener('click', function(e) {
+                clickTimes.push(Date.now());
+                // 최근 3초 이내 클릭만 유지
+                clickTimes = clickTimes.filter(function(t) { return Date.now() - t < 3000; });
+                if (clickTimes.length >= 4) {
+                    trackEvent('rage_click', {
+                        click_count: clickTimes.length,
+                        target_tag: e.target.tagName,
+                        target_class: e.target.className.toString().substring(0, 50)
+                    });
+                    clickTimes = [];
+                }
+            });
+
+            // =========================================
+            // 15. 화면 방향 변경 추적 (모바일)
+            // =========================================
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    trackEvent('orientation_change', {
+                        orientation: screen.orientation ? screen.orientation.type : 'unknown',
+                        viewport_width: window.innerWidth,
+                        viewport_height: window.innerHeight
+                    });
+                }, 100);
+            });
+
+            // =========================================
+            // 16. 페이지 이탈 시 최종 데이터 전송
+            // =========================================
+            function sendExitData() {
+                // 남은 섹션 타이머 정리
+                Object.keys(sectionNames).forEach(function(selector) {
+                    var el = document.querySelector(selector);
+                    var name = sectionNames[selector];
+                    if (el && el._viewStart) {
+                        sectionTimers[name] += Date.now() - el._viewStart;
+                        el._viewStart = null;
+                    }
+                });
+
+                // 섹션별 체류시간 전송
+                var topSection = '';
+                var topTime = 0;
+                Object.keys(sectionTimers).forEach(function(name) {
+                    var sec = Math.round(sectionTimers[name] / 1000);
+                    if (sec > topTime) { topTime = sec; topSection = name; }
+                });
+
+                trackEvent('page_exit', {
+                    total_time_sec: Math.round((Date.now() - pageLoadTime) / 1000),
+                    active_time_sec: activeTime,
+                    max_scroll: maxScrollPercent,
+                    sections_viewed: Object.keys(sectionReported).filter(function(k) { return sectionReported[k]; }).length,
+                    most_viewed_section: topSection,
+                    most_viewed_sec: topTime,
+                    visit_number: visitCount
+                });
+
+                // 개별 섹션 체류시간
+                Object.keys(sectionTimers).forEach(function(name) {
+                    if (sectionTimers[name] > 0) {
+                        trackEvent('section_dwell_time', {
+                            section: name,
+                            dwell_time_sec: Math.round(sectionTimers[name] / 1000)
+                        });
+                    }
+                });
+            }
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) sendExitData();
+            });
+            window.addEventListener('pagehide', sendExitData);
+
+        })();
     </script>
 </body>
 </html>
