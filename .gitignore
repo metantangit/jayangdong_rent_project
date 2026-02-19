@@ -8,6 +8,9 @@ templates/
 *.pyc
 __pycache__/
 
+# Data
+data/
+
 # Misc
 Untitled
 *.pdf
