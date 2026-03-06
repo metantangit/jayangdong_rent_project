@@ -495,6 +495,7 @@
             <a href="analysis.html">임대 분석</a>
             <a href="sangwon_analysis.html">상권 분석</a>
             <a href="report.html">전략 보고서</a>
+            <a href="tenant_research.html">임차 리서치</a>
         </nav>
 
         <!-- Header -->
@@ -768,8 +769,6 @@
 
                 updateStats(totalCount);
                 renderTable(filteredBrokers);
-                initSorting();
-                initFilters();
                 renderDongButtons();  // 동 버튼 동적 생성
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
@@ -1273,6 +1272,8 @@
 
         // 초기화
         initRangeFilters();  // 범위 필터 이벤트는 한 번만 초기화
+        initFilters();       // 영업기간 필터 이벤트는 한 번만 초기화
+        initSorting();       // 정렬 이벤트는 한 번만 초기화
         updateRecommendedSection(currentGu);  // 추천 섹션 초기 표시
         loadData();
     </script>

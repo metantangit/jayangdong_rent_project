@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임차 리서치 — RALPH Loop 임차인 확보 전략</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XT1H1Z69G2"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XT1H1Z69G2');</script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --orange: #f97316;
+            --pink: #ec4899;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Navigation */
+        .nav { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .nav a {
+            padding: 10px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav a:hover, .nav a.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        /* Header */
+        header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .header-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        h1 { font-size: 1.6rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .header-sub { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* Property Strip */
+        .prop-strip {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        @media(max-width:768px) { .prop-strip { grid-template-columns: repeat(3, 1fr); } }
+        .prop-cell {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+        .prop-cell .val { font-size: 1rem; font-weight: 700; color: var(--text); }
+        .prop-cell .lbl { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Constraint Box */
+        .constraint {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+        }
+        .constraint h4 { color: #b45309; font-size: 0.85rem; margin-bottom: 8px; font-weight: 700; }
+        .constraint ul { padding-left: 18px; }
+        .constraint li { font-size: 0.82rem; color: #92400e; margin-bottom: 4px; }
+
+        /* Section */
+        section { margin-bottom: 40px; }
+        .sec-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sec-num {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            background: var(--primary);
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .sec-num.green { background: var(--success); }
+        .sec-num.yellow { background: var(--warning); }
+        .sec-num.purple { background: var(--purple); }
+        .sec-num.orange { background: var(--orange); }
+        .sec-num.pink { background: var(--pink); }
+        .sec-title { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+
+        /* Stat Grid */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+        @media(max-width:640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-val { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .stat-lbl { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Action Card */
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 12px 0;
+        }
+        .action-card h4 {
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-card p { font-size: 0.85rem; margin-bottom: 8px; }
+        .action-card ul { padding-left: 18px; }
+        .action-card li { font-size: 0.82rem; margin-bottom: 6px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .dot-green { background: var(--success); }
+        .dot-blue { background: var(--primary); }
+        .dot-yellow { background: var(--warning); }
+        .dot-purple { background: var(--purple); }
+
+        /* Highlight */
+        .hl { color: var(--primary); font-weight: 600; }
+        .hlg { color: var(--success); font-weight: 600; }
+        .hlw { color: #b45309; font-weight: 600; }
+        .hlr { color: var(--danger); font-weight: 600; }
+
+        /* Brand Table */
+        .brand-tbl {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.8rem;
+            margin: 16px 0 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .brand-tbl th {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .brand-tbl td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: top;
+            background: var(--card);
+        }
+        .brand-tbl tr:last-child td { border-bottom: none; }
+        .brand-tbl tr:hover td { background: #f8fafc; }
+        .brand-tbl .bname { color: var(--text); font-weight: 700; }
+        .fit { display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+        .fit-best { background: #d1fae5; color: #065f46; }
+        .fit-good { background: #dbeafe; color: #1e40af; }
+        .fit-ok { background: #fef3c7; color: #92400e; }
+        .fit-no { background: #fee2e2; color: #991b1b; }
+
+        /* Nearby Status */
+        .nearby-status {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .nearby-clear { background: #d1fae5; color: #065f46; }
+        .nearby-exists { background: #fee2e2; color: #991b1b; }
+        .nearby-check { background: #fef3c7; color: #92400e; }
+
+        /* Channel Grid */
+        .ch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+        @media(max-width:640px) { .ch-grid { grid-template-columns: 1fr; } }
+        .ch-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .ch-item .ch-name { font-weight: 700; color: var(--text); font-size: 0.88rem; margin-bottom: 2px; }
+        .ch-item .ch-url { color: var(--primary); font-size: 0.75rem; word-break: break-all; }
+        .ch-item .ch-desc { color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; }
+        .ch-item .ch-cost { color: var(--success); font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
+
+        /* Pitch Box */
+        .pitch {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .pitch h4 { color: #065f46; font-size: 0.88rem; margin-bottom: 10px; }
+        .pitch p { color: #064e3b; font-size: 0.82rem; line-height: 1.8; }
+
+        /* Objection */
+        .obj {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .obj-q { color: var(--orange); font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+        .obj-a { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 14px; padding-left: 12px; border-left: 2px solid var(--border); }
+
+        /* Priority Ranking */
+        .rank-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 8px 0;
+        }
+        .rank-num {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-muted);
+            min-width: 36px;
+            text-align: center;
+            line-height: 1;
+            padding-top: 4px;
+        }
+        .rank-num.top3 { color: var(--primary); }
+        .rank-body { flex: 1; }
+        .rank-name { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+        .rank-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+        .rank-why { font-size: 0.8rem; color: var(--text); margin-top: 6px; }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 6px 0;
+            font-size: 0.85rem;
+        }
+        .checklist .ck-box {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .checklist .ck-text { flex: 1; }
+        .checklist .ck-sub { color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 2px; }
+
+        /* Sub heading */
+        .sub-heading {
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 20px 0 12px;
+        }
+
+        /* Footer */
+        footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; }
+        footer p { color: var(--text-muted); font-size: 0.72rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html">실시간 시세</a>
+        <a href="broker.html">공인중개사</a>
+        <a href="analysis.html">임대 분석</a>
+        <a href="sangwon_analysis.html">상권 분석</a>
+        <a href="report.html">전략 보고서</a>
+        <a href="tenant_research.html" class="active">임차 리서치</a>
+    </nav>
+
+    <header>
+        <span class="header-badge">RALPH Loop v2</span>
+        <h1>자양동 2층 40평 — 임차인 확보 전략</h1>
+        <p class="header-sub">Research &rarr; Analyze &rarr; Launch &rarr; Pitch &rarr; Harvest | 2026.03.06</p>
+    </header>
+
+    <!-- Property Strip -->
+    <div class="prop-strip">
+        <div class="prop-cell"><div class="val">2층 40평</div><div class="lbl">위치 / 면적</div></div>
+        <div class="prop-cell"><div class="val">250만/월</div><div class="lbl">보증금 5,000만</div></div>
+        <div class="prop-cell"><div class="val">자양역 3분</div><div class="lbl">2호선 역세권</div></div>
+        <div class="prop-cell"><div class="val">7,773세대</div><div class="lbl">배후 아파트</div></div>
+        <div class="prop-cell"><div class="val">24만/일</div><div class="lbl">건대역 유동인구</div></div>
+        <div class="prop-cell"><div class="val">공실률 0%</div><div class="lbl">소규모상가 기준</div></div>
+    </div>
+
+    <!-- Constraint -->
+    <div class="constraint">
+        <h4>건물 제약조건 (솔직하게)</h4>
+        <ul>
+            <li><strong>엘리베이터 없음</strong> — 계단만. 대형견/부상동물/고령환자 접근 어려움</li>
+            <li><strong>30년 된 건물</strong> — 인테리어 리모델링 전제, 구조 변경 제약 가능</li>
+            <li><strong>1층 요식업</strong> — 계탄집 + 자양 고두리 (연기/냄새 이슈 가능, 반면 유동인구 생성)</li>
+        </ul>
+    </div>
+
+    <!-- ========== R: Research ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num">R</div><div class="sec-title">Research: 자양동은 왜 되는가</div></div>
+
+        <div class="stat-grid">
+            <div class="stat-item"><div class="stat-val">24.2만</div><div class="stat-lbl">건대역 일 유동인구</div></div>
+            <div class="stat-item"><div class="stat-val">0%</div><div class="stat-lbl">소규모 상가 공실률</div></div>
+            <div class="stat-item"><div class="stat-val">1.9조</div><div class="stat-lbl">동서울터미널 개발</div></div>
+            <div class="stat-item"><div class="stat-val">2,999세대</div><div class="stat-lbl">자양4동 재개발 신규</div></div>
+        </div>
+
+        <div class="action-card">
+            <h4><span class="dot dot-blue"></span>설득 무기 5가지</h4>
+            <ul>
+                <li><span class="hl">스타필드 서울</span> 입점 예정 — 동서울터미널 39층 복합개발, 2026말 착공 / 2031 완공</li>
+                <li><span class="hl">성수 스필오버</span> — 성수 평당 30~40만 폭등 → 프랜차이즈들이 건대/자양으로 눈 돌리는 중</li>
+                <li><span class="hl">롯데캐슬 이스트폴</span> 2025년 완성 + 쿠팡 본사 이전 = 이미 변화 진행 중</li>
+                <li><span class="hl">광진구 35만명</span>, 생산가능인구 76%, 외국인 결제 74.7% 급증</li>
+                <li><span class="hl">평당 6.25만원</span> — 서울 2층 평균 8만 대비 22% 저렴, 강남 대비 48% 저렴</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ========== A: Analyze ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num green">A</div><div class="sec-title">Analyze: 업종별 구체적 브랜드</div></div>
+        <p style="font-size:0.85rem;margin-bottom:16px;">엘리베이터 없는 30년 건물 2층이라는 제약을 반영해 우선순위 재조정. <span class="hlg">건강한 3040이 계단 걸어올라오는 업종</span>이 핵심.</p>
+
+        <!-- 1. Pilates -->
+        <div class="action-card">
+            <h4><span class="dot dot-green"></span>1순위: 필라테스/요가 <span class="fit fit-best">BEST FIT</span></h4>
+            <p>2층을 오히려 선호하는 대표 업종. 계단 = 워밍업. 40평이면 리포머 8~12대. 자양동에 개인 센터 8개 있지만 <span class="hl">프랜차이즈 브랜드는 전무</span>.</p>
+        </div>
+
+        <table class="brand-tbl">
+        <thead><tr><th>브랜드</th><th>매장수</th><th>가맹비</th><th>총 창업비</th><th>월매출(평균)</th><th>40평 핏</th><th>광진구 현황</th></tr></thead>
+        <tbody>
+        <tr><td class="bname">모던필라테스MPI</td><td>87~115개</td><td>440만</td><td>1.21억</td><td>-</td><td><span class="fit fit-best">40평 기준</span></td><td><span class="nearby-exists">구의동점 존재</span></td></tr>
+        <tr><td class="bname">필라테스365</td><td>26개</td><td>550만</td><td>2.99억</td><td>2,451만</td><td><span class="fit fit-good">적합</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">케어필라테스</td><td>23~24개</td><td>1,485만</td><td>7,838만~1.23억</td><td>-</td><td><span class="fit fit-best">20~50평</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">아메리카요가</td><td>27개</td><td>2,500만</td><td>1.23억</td><td>1,714만</td><td><span class="fit fit-good">적합</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">포시즌필라테스</td><td>18개</td><td>1,650만</td><td>1.67억</td><td>1,442만</td><td><span class="fit fit-good">위탁운영</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">다짐필라테스</td><td>17개</td><td>550만</td><td>1.43억</td><td>2,509만</td><td><span class="fit fit-good">적합</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">클럽필라테스</td><td>글로벌 1,300+</td><td>비공개</td><td>비공개</td><td>-</td><td><span class="fit fit-good">한국 확장중</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">리본필라테스</td><td>16개</td><td>2,200만</td><td>1.91억</td><td>3,562만</td><td><span class="fit fit-good">적합</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">이브필라테스</td><td>18개+</td><td>저비용</td><td>비공개</td><td>-</td><td><span class="fit fit-ok">소형 가능</span></td><td><span class="nearby-exists">건대프리미엄점 존재</span></td></tr>
+        <tr><td class="bname">로움요가필라테스</td><td>5개</td><td>1,100만</td><td>7,485만</td><td>1,532만</td><td><span class="fit fit-ok">30평 기준</span></td><td><span class="nearby-check">확인 필요</span></td></tr>
+        </tbody>
+        </table>
+
+        <div class="action-card">
+            <h4><span class="dot dot-green"></span>필라테스 본사 연락처</h4>
+            <ul>
+                <li><strong>모던필라테스MPI</strong> — 02-3471-5766 / mpikorea@modernpilates.co.kr</li>
+                <li><strong>케어필라테스</strong> — 02-579-9670 (프랜차이즈 전담) / education_care@naver.com</li>
+                <li><strong>포시즌필라테스</strong> — 02-356-8995 / 4seasonspilates.co.kr/franchise</li>
+                <li><strong>클럽필라테스</strong> — clubpilates.co.kr (한국 마스터: XFactor Fitness, 강남 신사동)</li>
+                <li><strong>필라테스율</strong> — 02-511-1005 / yuliner962@gmail.com</li>
+                <li><strong>이브필라테스</strong> — eve-pilates@naver.com</li>
+            </ul>
+        </div>
+
+        <!-- 2. Esthetic -->
+        <div class="action-card" style="margin-top:24px;">
+            <h4><span class="dot dot-green"></span>1순위 (공동): 에스테틱/피부관리 <span class="fit fit-best">BEST FIT</span></h4>
+            <p>예약제 운영 = 2층 불리함 없음. 최근 5년 <span class="hl">70.7% 성장</span> 업종. 계단 문제 없음 (건강한 3040 여성 고객).</p>
+        </div>
+
+        <table class="brand-tbl">
+        <thead><tr><th>브랜드</th><th>매장수</th><th>가맹비</th><th>총 창업비</th><th>40평 핏</th><th>특징</th><th>광진구 현황</th></tr></thead>
+        <tbody>
+        <tr><td class="bname">약손명가</td><td>130개+해외7국</td><td>1,000만</td><td>~4억(보증금 포함)</td><td><span class="fit fit-best">기준 40평!</span></td><td>44년 전통, K뷰티</td><td><span class="nearby-exists">건대점 존재</span></td></tr>
+        <tr><td class="bname">미플(아미아)</td><td>96개</td><td>2,750만</td><td>1.22억(25평)</td><td><span class="fit fit-good">프리미엄</span></td><td>에스테틱 1위</td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">허디터</td><td>130여개</td><td>본사문의</td><td>본사문의</td><td><span class="fit fit-good">적합</span></td><td>이마트/롯데 입점</td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">이지은레드클럽</td><td>150개+</td><td>700만</td><td>3,200만</td><td><span class="fit fit-good">25평+</span></td><td>초저가 4,000원/30분</td><td><span class="nearby-check">확인 필요</span></td></tr>
+        <tr><td class="bname">DA클리닉</td><td>확장초기</td><td>본사문의</td><td>본사문의</td><td><span class="fit fit-ok">확인필요</span></td><td>DA성형 계열</td><td><span class="nearby-check">확인 필요</span></td></tr>
+        </tbody>
+        </table>
+
+        <!-- 3. Kids -->
+        <div class="action-card" style="margin-top:24px;">
+            <h4><span class="dot dot-blue"></span>2순위: 키즈 코딩/미술 학원 <span class="fit fit-good">GOOD FIT</span></h4>
+            <p>2층 = 전통적 학원 위치. 계단 문제 없음. 광진구에 <span class="hl">코딩 전문 프랜차이즈 거의 공백</span>.</p>
+        </div>
+
+        <table class="brand-tbl">
+        <thead><tr><th>브랜드</th><th>매장수</th><th>가맹비(총)</th><th>월매출</th><th>특징</th></tr></thead>
+        <tbody>
+        <tr><td class="bname">아트앤하트</td><td>524개!</td><td>5,000만</td><td>1,259만</td><td>심리미술 전문, 20년 역사</td></tr>
+        <tr><td class="bname">코딩앤플레이</td><td>가맹운영중</td><td>3,000~5,000만</td><td>-</td><td>20~40평 적합</td></tr>
+        <tr><td class="bname">코딩놀자</td><td>가맹운영중</td><td>본사문의</td><td>-</td><td>20~30평, 소자본</td></tr>
+        <tr><td class="bname">코딩하루</td><td>가맹운영중</td><td>소자본</td><td>-</td><td>자체 콘텐츠</td></tr>
+        <tr><td class="bname">원더키즈랩</td><td>모집중</td><td>본사문의</td><td>-</td><td>창의교육, wonderkids.ac</td></tr>
+        </tbody>
+        </table>
+
+        <!-- 4. Study Cafe -->
+        <div class="action-card" style="margin-top:24px;">
+            <h4><span class="dot dot-blue"></span>2순위 (공동): 스터디카페 <span class="fit fit-good">GOOD FIT</span></h4>
+            <p>10년간 <span class="hl">61배 급증</span>. 무인 운영 가능. 건대+자양 대학가 수요. 단 40평은 업계 최소 규모.</p>
+        </div>
+
+        <table class="brand-tbl">
+        <thead><tr><th>브랜드</th><th>매장수</th><th>총 창업비</th><th>기준 평수</th><th>핏</th></tr></thead>
+        <tbody>
+        <tr><td class="bname">아이덴 스터디카페</td><td>확장중</td><td>1~1.5억</td><td>40~50평</td><td><span class="fit fit-best">40평 OK</span></td></tr>
+        <tr><td class="bname">르하임 스터디카페</td><td>1위권</td><td>1.3억~</td><td>50평</td><td><span class="fit fit-ok">약간 부족</span></td></tr>
+        <tr><td class="bname">작심 스터디카페</td><td>700개</td><td>1.99억</td><td>50평</td><td><span class="fit fit-ok">약간 부족</span></td></tr>
+        </tbody>
+        </table>
+
+        <!-- 5. Others -->
+        <div class="action-card" style="margin-top:24px;">
+            <h4><span class="dot dot-yellow"></span>3순위: 기타 업종</h4>
+            <ul>
+                <li><strong>토탈뷰티숍</strong> (네일+속눈썹+왁싱) — 골든네일 가맹비 300만, 총 3,300만 / 유후네일 가맹비 면제</li>
+                <li><strong>르호봇 공유오피스</strong> — 소규모 가맹 가능, 40평에 1인실 8~12개 → 월 320~440만</li>
+                <li><strong>피부과/의원</strong> — 오라클피부과(38개 국내지점) 분원 문의 가능. 단 <span class="hlr">차앤박 건대입구점 이미 존재</span>, 건대 상권 피부과 10개+ 경쟁 치열</li>
+            </ul>
+        </div>
+
+        <!-- Eliminated -->
+        <div class="action-card" style="border-color: var(--danger);">
+            <h4><span class="dot" style="background:var(--danger)"></span>탈락 업종 (엘리베이터 없어서)</h4>
+            <ul>
+                <li><span class="hlr">동물병원</span> — 대형견, 부상 동물 계단 이동 불가. 수의사법상 체인도 사실상 불가</li>
+                <li><span class="hlr">무인세탁소</span> — 세탁물 들고 계단 오르내리기 비현실적</li>
+                <li><span class="hlr">대형 헬스장</span> — 중장비 반입 + 진동/소음 이슈</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ========== L: Launch ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num yellow">L</div><div class="sec-title">Launch: 수요자가 모이는 곳에 올려라</div></div>
+        <p style="font-size:0.85rem;margin-bottom:16px;">브랜드 리스트만 뽑으면 의미 없다. <span class="hlw">예비 창업자/개원 의사가 실제로 매물을 찾는 채널</span>에 올려야 한다.</p>
+
+        <h4 class="sub-heading">A. 상가 매물 플랫폼 (건물주 직접 등록)</h4>
+        <div class="ch-grid">
+            <div class="ch-item">
+                <div class="ch-name">네모 (Nemo)</div>
+                <div class="ch-url">nemoapp.kr</div>
+                <div class="ch-desc">건물주 직접 등록 가능. 직방+다음부동산 동시 노출</div>
+                <div class="ch-cost">90일 22만원</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">점포라인</div>
+                <div class="ch-url">jumpoline.com</div>
+                <div class="ch-desc">10만 중개사/창업자 네트워크. 직거래 가능</div>
+                <div class="ch-cost">무료 등록 가능</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">상가114</div>
+                <div class="ch-url">sangga114.co.kr</div>
+                <div class="ch-desc">상가 전문 분양/임대</div>
+                <div class="ch-cost">등록비 별도</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">창업이지</div>
+                <div class="ch-url">changupeasy.com</div>
+                <div class="ch-desc">예비창업자 매물 검색 + 양도양수 + 컨설팅</div>
+                <div class="ch-cost">등록비 별도</div>
+            </div>
+        </div>
+
+        <h4 class="sub-heading">B. 의사/수의사 개원 채널</h4>
+        <div class="ch-grid">
+            <div class="ch-item">
+                <div class="ch-name">메디게이트</div>
+                <div class="ch-url">medigate.net/lease</div>
+                <div class="ch-desc">의사 전용 커뮤니티 — 12만 의사회원</div>
+                <div class="ch-cost">월 11만원 (VAT 포함)</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">개원닷컴</div>
+                <div class="ch-url">gaewon.net</div>
+                <div class="ch-desc">10만 의사 대상 개원정보 플랫폼</div>
+                <div class="ch-cost">등록비 별도</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">메디컬잡</div>
+                <div class="ch-url">medicaljob.co.kr</div>
+                <div class="ch-desc">병의원 입지/분양/임대 매물 1위</div>
+                <div class="ch-cost">박스광고 유료</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">메디앙</div>
+                <div class="ch-url">mediangopen2.com</div>
+                <div class="ch-desc">병원개원 컨설팅 전문, 매물 추천</div>
+                <div class="ch-cost">컨설팅 연계</div>
+            </div>
+        </div>
+
+        <h4 class="sub-heading">C. 프랜차이즈 본사 접근</h4>
+        <div class="ch-grid">
+            <div class="ch-item">
+                <div class="ch-name">마이프차</div>
+                <div class="ch-url">myfranchise.kr</div>
+                <div class="ch-desc">1만개 프랜차이즈 비교 — 여기서 브랜드 찾고 가맹문의</div>
+                <div class="ch-cost">무료 검색</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">공정위 가맹사업정보</div>
+                <div class="ch-url">franchise.ftc.go.kr</div>
+                <div class="ch-desc">정보공개서(매출/폐점률/가맹비) 공시 데이터</div>
+                <div class="ch-cost">무료 열람</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">프랜차이즈 창업박람회</div>
+                <div class="ch-url">franchisecoex.co.kr</div>
+                <div class="ch-desc">COEX 2026 — 본사 담당자 직접 만남. 건물주로 참가!</div>
+                <div class="ch-cost">입장 무료~소액</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">점포라인 프랜차이즈</div>
+                <div class="ch-url">jumpoline.com/franch</div>
+                <div class="ch-desc">필라테스/피부미용 카테고리별 가맹 모집 브랜드 리스트</div>
+                <div class="ch-cost">무료 검색</div>
+            </div>
+        </div>
+
+        <h4 class="sub-heading">D. 커뮤니티/오프라인</h4>
+        <div class="ch-grid">
+            <div class="ch-item">
+                <div class="ch-name">네이버 카페</div>
+                <div class="ch-url">"필라테스 창업" "에스테틱 창업" 검색</div>
+                <div class="ch-desc">예비 창업자 커뮤니티에 매물 게시</div>
+                <div class="ch-cost">무료</div>
+            </div>
+            <div class="ch-item">
+                <div class="ch-name">주변 프랜차이즈 점주</div>
+                <div class="ch-url">직접 방문</div>
+                <div class="ch-desc">"본사 가맹팀 연락처" 물어보기 — 가장 빠른 네트워킹</div>
+                <div class="ch-cost">무료</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== P: Pitch ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num purple">P</div><div class="sec-title">Pitch: 가맹문의 메시지 + 반론 대응</div></div>
+
+        <div class="pitch">
+            <h4>복사해서 보내는 가맹제안 메시지</h4>
+            <p>안녕하세요, 서울 광진구 자양동 상가 건물주입니다.</p>
+            <p>자양역(2호선) 도보 3분 거리, 2층 40평 상가에 귀사 가맹점 유치를 제안드립니다.</p>
+            <p style="margin-top:12px;"><strong>[매물]</strong> 광진구 자양동 553-264, 능동로31 / 2층 40평(132m2)<br>
+            보증금 5,000만 / 월세 250만 (평당 6.25만 — 서울 2층 평균 대비 22% 저렴)</p>
+            <p style="margin-top:12px;"><strong>[상권]</strong> 배후 아파트 7,773세대 / 건대역 유동인구 24만/일<br>
+            동서울터미널 1.9조 복합개발(스타필드 서울) 2026 착공<br>
+            광진구 내 귀사 매장 부재 → 독점 상권 선점 기회</p>
+            <p style="margin-top:12px;">매장 사진, 도면 추가 공유 가능합니다.<br>
+            연락처: 010-8963-8889 / 010-7415-7221</p>
+        </div>
+
+        <div class="obj">
+            <div class="obj-q">"2층인데 계단만 있다며요?"</div>
+            <div class="obj-a">필라테스/에스테틱은 100% 예약제 — 고객이 목적 방문합니다. 2025년 파이낸셜뉴스 보도: MZ 창업자들이 오히려 임대료 싼 2층을 적극 선호. 계단은 필라테스 고객에겐 워밍업입니다.</div>
+
+            <div class="obj-q">"30년 된 건물이 좀..."</div>
+            <div class="obj-a">인테리어만 하면 내부는 신축과 동일합니다. 오히려 건물 감가 = 건물주가 임대료를 합리적으로 책정한 이유. 분위기는 MZ가 31.3%로 1위 고려 요소 — 인테리어 투자 ROI가 확실합니다.</div>
+
+            <div class="obj-q">"자양동은 B급 상권 아닌가요?"</div>
+            <div class="obj-a">소규모 상가 공실률 0%, 서울 40개 상권 중 8위입니다. 성수동 평당 30~40만 폭등 → 자양동은 성수 대안 상권으로 부상 중. 스타필드 서울 + 2,999세대 재개발로 지역 가치 급상승 예정.</div>
+
+            <div class="obj-q">"월세 250이 비싸지 않나요?"</div>
+            <div class="obj-a">에스테틱 월매출 2,000만 대비 임대료 비중 12.5%. 필라테스 월매출 1,400~4,400만 대비 6~18%. 모던필라테스 등 프랜차이즈 기준으로도 매우 합리적인 수준입니다.</div>
+
+            <div class="obj-q">"1층 음식점 냄새가..."</div>
+            <div class="obj-a" style="margin-bottom:0;">환기 시스템으로 해결 가능합니다. 오히려 1층 요식업이 유동인구를 만들어주는 장점. 계탄집/고두리 손님이 2층 간판을 자연스럽게 인지합니다.</div>
+        </div>
+    </section>
+
+    <!-- ========== H: Harvest ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num orange">H</div><div class="sec-title">Harvest: 실행 우선순위 TOP 10</div></div>
+
+        <div class="rank-card">
+            <div class="rank-num top3">01</div>
+            <div class="rank-body">
+                <div class="rank-name">네모 + 점포라인에 매물 등록</div>
+                <div class="rank-meta">비용: 네모 22만원 + 점포라인 무료 | 즉시 실행</div>
+                <div class="rank-why">등록만 하면 예비 창업자에게 자동 노출. 가장 빠르고 확실한 첫 스텝.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num top3">02</div>
+            <div class="rank-body">
+                <div class="rank-name">메디게이트 + 개원닷컴 매물 등록</div>
+                <div class="rank-meta">비용: 월 11만원~ | 즉시 실행</div>
+                <div class="rank-why">12만+10만 의사에게 노출. "피부과/에스테틱 개원 적합 물건"으로 등록.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num top3">03</div>
+            <div class="rank-body">
+                <div class="rank-name">케어필라테스 + 필라테스365 가맹문의</div>
+                <div class="rank-meta">02-579-9670 | 전화 or 이메일</div>
+                <div class="rank-why">광진구 매장 미확인 브랜드. 40평 기준 데이터 보유. 독점 상권 어필.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">04</div>
+            <div class="rank-body">
+                <div class="rank-name">미플네이처 가맹문의</div>
+                <div class="rank-meta">mipl.co.kr | 에스테틱 프랜차이즈 1위, 96개점</div>
+                <div class="rank-why">광진구 매장 유무 확인 후 "독점 상권" 어필. 에스테틱 1위 브랜드.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">05</div>
+            <div class="rank-body">
+                <div class="rank-name">아트앤하트 가맹문의</div>
+                <div class="rank-meta">artandheart.co.kr | 524개 매장, 가맹비 총 5,000만</div>
+                <div class="rank-why">가장 검증된 키즈 프랜차이즈. 광진구 코딩/미술 학원 공백. 월매출 1,259만.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">06</div>
+            <div class="rank-body">
+                <div class="rank-name">클럽필라테스 + 포시즌필라테스</div>
+                <div class="rank-meta">clubpilates.co.kr / 4seasonspilates.co.kr</div>
+                <div class="rank-why">글로벌 브랜드 + 위탁운영 모델. 본사가 입지 검토 지원.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">07</div>
+            <div class="rank-body">
+                <div class="rank-name">이지은레드클럽 + 허디터</div>
+                <div class="rank-meta">theredclub.co.kr | 초저가 모델(가맹비 700만)</div>
+                <div class="rank-why">에스테틱 차선책. 이지은레드클럽은 가맹비 낮아 임차인 진입장벽 낮음.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">08</div>
+            <div class="rank-body">
+                <div class="rank-name">프랜차이즈 창업박람회 참가</div>
+                <div class="rank-meta">franchisecoex.co.kr | COEX 2026</div>
+                <div class="rank-why">건물주로 가서 "입점 제안" → 본사 담당자 여러 명 한 번에 만남.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">09</div>
+            <div class="rank-body">
+                <div class="rank-name">공정위 정보공개서로 브랜드 검증</div>
+                <div class="rank-meta">franchise.ftc.go.kr</div>
+                <div class="rank-why">관심 브랜드의 매출, 폐점률, 분쟁 이력 확인 후 안전한 임차인 선별.</div>
+            </div>
+        </div>
+        <div class="rank-card">
+            <div class="rank-num">10</div>
+            <div class="rank-body">
+                <div class="rank-name">주변 프랜차이즈 점주 네트워킹</div>
+                <div class="rank-meta">자양동/건대 상권 직접 방문</div>
+                <div class="rank-why">"본사 가맹팀 연락처" 받기. 현장에서 가장 빠른 정보.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== Checklist ========== -->
+    <section>
+        <div class="sec-head"><div class="sec-num pink">!</div><div class="sec-title">이번 주 체크리스트</div></div>
+        <ul class="checklist">
+            <li><div class="ck-box"></div><div class="ck-text"><strong>네모에 매물 등록</strong><span class="ck-sub">nemoapp.kr → 매물 내놓기 → "필라테스/에스테틱/학원 적합" 명시 | 22만원/90일</span></div></li>
+            <li><div class="ck-box"></div><div class="ck-text"><strong>점포라인에 매물 등록</strong><span class="ck-sub">jumpoline.com → 임대매물 등록 (무료) + 프랜차이즈 카테고리 노출</span></div></li>
+            <li><div class="ck-box"></div><div class="ck-text"><strong>메디게이트 임대분양 등록</strong><span class="ck-sub">medigate.net/lease → 12만 의사에게 노출 | 월 11만원</span></div></li>
+            <li><div class="ck-box"></div><div class="ck-text"><strong>케어필라테스 전화</strong><span class="ck-sub">02-579-9670 → "광진구 자양역 3분, 40평, 평당 6.25만원" 제안</span></div></li>
+            <li><div class="ck-box"></div><div class="ck-text"><strong>미플네이처 가맹문의</strong><span class="ck-sub">mipl.co.kr → 에스테틱 1위, 96개점. "광진구 미플 매장 유무" 먼저 확인</span></div></li>
+            <li><div class="ck-box"></div><div class="ck-text"><strong>아트앤하트 가맹문의</strong><span class="ck-sub">artandheart.co.kr → 524개 매장, 키즈미술 1위. 광진구 진출 의향 타진</span></div></li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>자양동 2층 40평 RALPH Loop 임차인 확보 전략 v2 | 2026.03.06</p>
+        <p style="margin-top:4px;">데이터 출처: 공정거래위원회, 마이프차, 점포라인, 메디게이트, 개원닷컴, 데일리개원, 데일리벳, 한국부동산원, 이투데이, 한국경제, 파이낸셜뉴스</p>
+    </footer>
+</div>
+</body>
+</html>
