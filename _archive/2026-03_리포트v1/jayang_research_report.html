@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자양동 2층 40평 임차인 확보 전략 리서치 리포트</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        header { text-align: center; padding: 60px 20px; border-bottom: 1px solid #1e293b; }
+        header h1 { font-size: 2rem; font-weight: 700; color: #f8fafc; margin-bottom: 12px; }
+        header p { color: #94a3b8; font-size: 0.95rem; }
+        .date { color: #64748b; font-size: 0.8rem; margin-top: 8px; }
+
+        /* Property Card */
+        .property-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 40px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+        }
+        .prop-item { text-align: center; }
+        .prop-value { font-size: 1.3rem; font-weight: 700; color: #38bdf8; }
+        .prop-label { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+
+        /* Sections */
+        section { margin: 50px 0; }
+        h2 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 8px; padding-bottom: 12px; border-bottom: 2px solid #38bdf8; }
+        h3 { font-size: 1.15rem; font-weight: 600; color: #e2e8f0; margin: 24px 0 12px; }
+        h4 { font-size: 1rem; font-weight: 600; color: #94a3b8; margin: 16px 0 8px; }
+        p { margin-bottom: 12px; color: #cbd5e1; font-size: 0.9rem; }
+
+        /* Grade Badge */
+        .grade { display: inline-block; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .grade-s { background: #22c55e; color: #052e16; }
+        .grade-a { background: #38bdf8; color: #0c4a6e; }
+        .grade-b { background: #f59e0b; color: #451a03; }
+        .grade-c { background: #ef4444; color: #450a0a; }
+        .grade-d { background: #64748b; color: #0f172a; }
+
+        /* Hypothesis Cards */
+        .hypo-grid { display: flex; flex-direction: column; gap: 16px; }
+        .hypo-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+        .hypo-card:hover { border-color: #38bdf8; }
+        .hypo-card.top-pick { border-color: #22c55e; border-width: 2px; }
+        .hypo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .hypo-title { font-size: 1.1rem; font-weight: 600; color: #f8fafc; }
+        .hypo-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 12px 0; }
+        .meta-item { background: #0f172a; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; }
+        .meta-label { color: #64748b; }
+        .meta-value { color: #e2e8f0; font-weight: 500; }
+        .hypo-desc { font-size: 0.85rem; color: #94a3b8; }
+        .hypo-action { margin-top: 12px; font-size: 0.85rem; color: #38bdf8; font-weight: 500; }
+
+        /* Ranking Table */
+        .rank-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        .rank-table th { background: #1e293b; color: #94a3b8; font-size: 0.75rem; font-weight: 500; padding: 10px 12px; text-align: left; }
+        .rank-table td { padding: 12px; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
+        .rank-table tr:hover { background: #1e293b; }
+        .rank-num { font-size: 1.2rem; font-weight: 700; color: #38bdf8; }
+
+        /* Stats Row */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+        .stat-card { background: #1e293b; border-radius: 10px; padding: 16px; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: #38bdf8; }
+        .stat-label { font-size: 0.8rem; color: #64748b; margin-top: 4px; }
+        .stat-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+
+        /* Key Insight Box */
+        .insight-box {
+            background: linear-gradient(135deg, #1e3a5f, #1e293b);
+            border-left: 4px solid #38bdf8;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        .insight-box p { color: #e2e8f0; margin: 0; }
+
+        .warning-box {
+            background: linear-gradient(135deg, #451a03, #1e293b);
+            border-left: 4px solid #ef4444;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        .warning-box p { color: #fca5a5; margin: 0; }
+
+        .success-box {
+            background: linear-gradient(135deg, #052e16, #1e293b);
+            border-left: 4px solid #22c55e;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        .success-box p { color: #bbf7d0; margin: 0; }
+
+        /* Action Plan */
+        .action-list { list-style: none; }
+        .action-list li { padding: 12px 16px; border-left: 3px solid #334155; margin-bottom: 8px; font-size: 0.9rem; }
+        .action-list li strong { color: #38bdf8; }
+        .action-list li.priority-high { border-left-color: #22c55e; }
+        .action-list li.priority-mid { border-left-color: #f59e0b; }
+        .action-list li.priority-low { border-left-color: #64748b; }
+
+        /* Footer */
+        footer { text-align: center; padding: 40px 20px; color: #475569; font-size: 0.8rem; border-top: 1px solid #1e293b; margin-top: 60px; }
+
+        /* Category filter */
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid #334155; background: transparent; color: #94a3b8; font-size: 0.8rem; cursor: pointer; }
+        .filter-btn.active { background: #38bdf8; color: #0c4a6e; border-color: #38bdf8; }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.5rem; }
+            .property-card { grid-template-columns: repeat(3, 1fr); }
+            .hypo-meta { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>자양동 2층 40평 임차인 확보 전략</h1>
+            <p>10개 Agent 병렬 리서치 종합 리포트</p>
+            <p class="date">2026.03.06 | RALPH Loop Research</p>
+        </header>
+
+        <!-- Property Summary -->
+        <div class="property-card">
+            <div class="prop-item"><div class="prop-value">40평</div><div class="prop-label">전용면적</div></div>
+            <div class="prop-item"><div class="prop-value">2층</div><div class="prop-label">층수</div></div>
+            <div class="prop-item"><div class="prop-value">250만</div><div class="prop-label">월세</div></div>
+            <div class="prop-item"><div class="prop-value">5,000만</div><div class="prop-label">보증금</div></div>
+            <div class="prop-item"><div class="prop-value">3분</div><div class="prop-label">자양역 도보</div></div>
+            <div class="prop-item"><div class="prop-value">7,773</div><div class="prop-label">배후 아파트 세대</div></div>
+        </div>
+
+        <!-- Section 1: 상권 진단 -->
+        <section>
+            <h2>1. 상권 진단</h2>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">B급</div>
+                    <div class="stat-label">상권 등급</div>
+                    <div class="stat-sub">주거배후형 + 역세권 혼합</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6.25만/평</div>
+                    <div class="stat-label">평당 월세</div>
+                    <div class="stat-sub">서울 2층 평균(8만) 대비 저렴</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">355개</div>
+                    <div class="stat-label">도보권 점포</div>
+                    <div class="stat-sub">음식71 / 뷰티51 / 학원34</div>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <p><strong>핵심 판단:</strong> 건대 상권 외곽의 B급 주거배후 상권. 월세 250은 시세 수준이지 저렴한 것이 아님. 2층에서 살아남으려면 "일부러 찾아오는" 목적형 업종만 가능.</p>
+            </div>
+
+            <h3>실거래 데이터가 말하는 진실</h3>
+            <div class="warning-box">
+                <p><strong>거래 성사율 0% 업종:</strong> 헬스클럽(4건), 치킨(3건), 떡볶이(4건), 이자카야(2건), 피부미용(2건), 마사지(2건) - 이 업종들은 이 상권에서 거래 자체가 안 됨</p>
+            </div>
+            <div class="success-box">
+                <p><strong>거래 잘 되는 업종:</strong> 카페(89%), 한식(100%), 사무실(80%), 분식(100%) - 생활밀착형이 살아남는 상권</p>
+            </div>
+
+            <h3>미래 변수: 동서울터미널 1.8조 복합개발</h3>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">2026 말</div>
+                    <div class="stat-label">착공 예정</div>
+                    <div class="stat-sub">스타필드 입점 확정</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10만+</div>
+                    <div class="stat-label">예상 일 유동인구</div>
+                    <div class="stat-sub">스타필드 하남 6.8만/일 참고</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6,500+</div>
+                    <div class="stat-label">신규 가구 유입</div>
+                    <div class="stat-sub">반경 1km 재개발 합산</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 전체 가설 랭킹 -->
+        <section>
+            <h2>2. 전체 가설 랭킹 (10개 Agent 종합)</h2>
+            <p>25개 업종을 조사하여 월세 감당력, 2층 적합성, 자양동 상권 적합성, 현실성을 종합 평가했습니다.</p>
+
+            <table class="rank-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>업종</th>
+                        <th>월매출(추정)</th>
+                        <th>월세 감당</th>
+                        <th>2층 적합</th>
+                        <th>종합</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank-num">1</span></td>
+                        <td><strong>공유 뷰티 라운지</strong></td>
+                        <td>595만(임대수익)</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-s">S</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">2</span></td>
+                        <td><strong>필라테스 스튜디오</strong></td>
+                        <td>1,500~3,000만</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">3</span></td>
+                        <td><strong>피부과/에스테틱 의원</strong></td>
+                        <td>3,000~14,400만</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">4</span></td>
+                        <td><strong>동물병원</strong></td>
+                        <td>2,500~4,000만</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">5</span></td>
+                        <td><strong>키즈 학원 (코딩/미술)</strong></td>
+                        <td>600~1,500만</td>
+                        <td><span class="grade grade-a">가능</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">6</span></td>
+                        <td><strong>에스테틱/피부관리실</strong></td>
+                        <td>2,000~4,200만</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-a">A-</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">7</span></td>
+                        <td><strong>무인 스터디카페</strong></td>
+                        <td>800~1,200만</td>
+                        <td><span class="grade grade-b">빠듯</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-b">B+</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">8</span></td>
+                        <td><strong>치과</strong></td>
+                        <td>9,400만</td>
+                        <td><span class="grade grade-s">충분</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-b">B+</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">9</span></td>
+                        <td><strong>헤어살롱</strong></td>
+                        <td>2,000~4,000만</td>
+                        <td><span class="grade grade-a">가능</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">10</span></td>
+                        <td><strong>심리상담센터</strong></td>
+                        <td>500~800만(순)</td>
+                        <td><span class="grade grade-a">가능</span></td>
+                        <td><span class="grade grade-s">최적</span></td>
+                        <td><span class="grade grade-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">11</span></td>
+                        <td><strong>촬영/크리에이터 스튜디오</strong></td>
+                        <td>600~1,600만</td>
+                        <td><span class="grade grade-b">조건부</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">12</span></td>
+                        <td><strong>키즈카페 (소형/무인)</strong></td>
+                        <td>800~1,200만</td>
+                        <td><span class="grade grade-b">빠듯</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-b">B-</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">13</span></td>
+                        <td><strong>사진 스튜디오</strong></td>
+                        <td>600~800만</td>
+                        <td><span class="grade grade-b">조건부</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-b">B-</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">14</span></td>
+                        <td><strong>셀프스토리지</strong></td>
+                        <td>200~400만</td>
+                        <td><span class="grade grade-c">어려움</span></td>
+                        <td><span class="grade grade-b">조건부</span></td>
+                        <td><span class="grade grade-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">15</span></td>
+                        <td><strong>한의원</strong></td>
+                        <td>3,300만</td>
+                        <td><span class="grade grade-b">빠듯</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">-</span></td>
+                        <td style="color:#64748b">댄스 스튜디오</td>
+                        <td style="color:#64748b">-</td>
+                        <td><span class="grade grade-c">어려움</span></td>
+                        <td><span class="grade grade-b">보통</span></td>
+                        <td><span class="grade grade-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">-</span></td>
+                        <td style="color:#64748b">공방/원데이클래스</td>
+                        <td style="color:#64748b">-</td>
+                        <td><span class="grade grade-d">불가</span></td>
+                        <td><span class="grade grade-a">좋음</span></td>
+                        <td><span class="grade grade-d">D</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">-</span></td>
+                        <td style="color:#64748b">음악 연습실</td>
+                        <td style="color:#64748b">-</td>
+                        <td><span class="grade grade-b">조건부</span></td>
+                        <td><span class="grade grade-d">부적합</span></td>
+                        <td><span class="grade grade-d">D</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">-</span></td>
+                        <td style="color:#64748b">코인세탁소</td>
+                        <td style="color:#64748b">-</td>
+                        <td><span class="grade grade-c">어려움</span></td>
+                        <td><span class="grade grade-d">부적합</span></td>
+                        <td><span class="grade grade-d">D</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">-</span></td>
+                        <td style="color:#64748b">중국동포 타겟 단독</td>
+                        <td style="color:#64748b">-</td>
+                        <td><span class="grade grade-d">불가</span></td>
+                        <td><span class="grade grade-b">보통</span></td>
+                        <td><span class="grade grade-d">D</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 3: TOP 5 가설 상세 -->
+        <section>
+            <h2>3. TOP 5 가설 상세</h2>
+
+            <div class="hypo-grid">
+                <!-- #1 -->
+                <div class="hypo-card top-pick">
+                    <div class="hypo-header">
+                        <span class="hypo-title">1. 공유 뷰티 라운지 (건물주 직접 운영)</span>
+                        <span class="grade grade-s">S등급</span>
+                    </div>
+                    <div class="hypo-meta">
+                        <div class="meta-item"><span class="meta-label">모델</span><br><span class="meta-value">아데르/살롱포레스트형</span></div>
+                        <div class="meta-item"><span class="meta-label">구성</span><br><span class="meta-value">부스 7개 (네일3+속눈썹2+반영구1+왁싱1)</span></div>
+                        <div class="meta-item"><span class="meta-label">월 임대수익</span><br><span class="meta-value">약 595만원</span></div>
+                        <div class="meta-item"><span class="meta-label">초기 투자</span><br><span class="meta-value">3,000~5,000만</span></div>
+                    </div>
+                    <p class="hypo-desc">기존 "1명에게 통임대" 발상을 깨는 모델. 40평을 7개 소형 부스로 쪼개서 1인 뷰티 사업자에게 각각 월 80~100만원에 임대. 한 부스가 비어도 나머지 6개가 리스크를 분산. 뷰티 업종은 2층 프라이버시를 오히려 선호하며, 자양동 아파트 배후 3040 여성 수요와 정확히 맞음.</p>
+                    <p class="hypo-action">ACTION: 아데르(adere.co.kr) 모델 벤치마킹 > 인테리어 견적 > 인스타/당근에서 1인 뷰티샵 운영자 모집</p>
+                </div>
+
+                <!-- #2 -->
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="hypo-title">2. 필라테스 스튜디오 (임차인 유치)</span>
+                        <span class="grade grade-a">A등급</span>
+                    </div>
+                    <div class="hypo-meta">
+                        <div class="meta-item"><span class="meta-label">타겟</span><br><span class="meta-value">독립 준비 강사 / 클럽필라테스 본사</span></div>
+                        <div class="meta-item"><span class="meta-label">규모</span><br><span class="meta-value">리포머 8~10대 배치 가능</span></div>
+                        <div class="meta-item"><span class="meta-label">월매출</span><br><span class="meta-value">1,500~3,000만 (회원 80~120명)</span></div>
+                        <div class="meta-item"><span class="meta-label">임대료 비율</span><br><span class="meta-value">매출의 8~17% (적정)</span></div>
+                    </div>
+                    <p class="hypo-desc">2층 40평이 필라테스 표준 조건과 정확히 일치. 55평 센터에서 월매출 8,000만/순익 2,000만 달성 사례 존재. 7,773세대 배후 여성 수요 풍부. 클럽필라테스는 자양동 미진출 상태로 본사 타진 가치 있음. 커브스는 이미 자양동에 있으므로 제외.</p>
+                    <p class="hypo-action">ACTION: 클럽필라테스 본사 연락 + 네이버 "필라테스 창업" 카페 매물 포스팅 + 건대 인근 필라테스 매장 강사 독립 수요 탐색</p>
+                </div>
+
+                <!-- #3 -->
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="hypo-title">3. 피부과 의원 (임차인 유치)</span>
+                        <span class="grade grade-a">A등급</span>
+                    </div>
+                    <div class="hypo-meta">
+                        <div class="meta-item"><span class="meta-label">타겟</span><br><span class="meta-value">일반의 피부과 개원 / 피부과 2호점</span></div>
+                        <div class="meta-item"><span class="meta-label">월매출</span><br><span class="meta-value">평균 1억 4,400만 (의원급 최고)</span></div>
+                        <div class="meta-item"><span class="meta-label">월세 비율</span><br><span class="meta-value">매출의 1.7% (매우 낮음)</span></div>
+                        <div class="meta-item"><span class="meta-label">채널</span><br><span class="meta-value">메디게이트, 개원닷컴</span></div>
+                    </div>
+                    <p class="hypo-desc">피부과는 의원급 월매출 1위. 일반의 개원 10건 중 8건이 피부과로 신고할 정도로 개원 붐. 2층은 의원 개원의 대세 층수(2~4층). 핵심 설득 포인트: "건대입구역 피부과 개원 대비 임대료 1/2 이하로 시작".</p>
+                    <p class="hypo-action">ACTION: 메디게이트/개원닷컴에 매물 등록 + 개원 컨설팅 업체에 역제안 + 상권분석 데이터 포함 제안서 제작</p>
+                </div>
+
+                <!-- #4 -->
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="hypo-title">4. 동물병원 (임차인 유치)</span>
+                        <span class="grade grade-a">A등급</span>
+                    </div>
+                    <div class="hypo-meta">
+                        <div class="meta-item"><span class="meta-label">규제</span><br><span class="meta-value">132m2 < 300m2 = 1종 근생 가능</span></div>
+                        <div class="meta-item"><span class="meta-label">월매출</span><br><span class="meta-value">평균 3,300만</span></div>
+                        <div class="meta-item"><span class="meta-label">시장</span><br><span class="meta-value">반려가구 591만, 의료비 75% 지출</span></div>
+                        <div class="meta-item"><span class="meta-label">트렌드</span><br><span class="meta-value">2층 개원 0.5%→23% 급증</span></div>
+                    </div>
+                    <p class="hypo-desc">동물병원 2층 개원 비율이 23%로 급증하는 추세. 7,773세대 아파트 배후 반려동물 수요 확실. 132m2로 300m2 미만이라 1종 근생 개원 가능. 자양동 현재 10곳 운영 중이지만 폐업률 71%가 시사하는 바: 차별화(야간진료, 전문분야) 필수.</p>
+                    <p class="hypo-action">ACTION: 수의대 졸업생/개원 커뮤니티에 매물 홍보 + "아파트 7,773세대 배후" 데이터 강조 + 엘리베이터 유무 확인</p>
+                </div>
+
+                <!-- #5 -->
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="hypo-title">5. 키즈 코딩/미술 학원 (임차인 유치)</span>
+                        <span class="grade grade-a">A등급</span>
+                    </div>
+                    <div class="hypo-meta">
+                        <div class="meta-item"><span class="meta-label">배후</span><br><span class="meta-value">7,773세대 학부모 수요</span></div>
+                        <div class="meta-item"><span class="meta-label">손익분기</span><br><span class="meta-value">학생 30~40명</span></div>
+                        <div class="meta-item"><span class="meta-label">트렌드</span><br><span class="meta-value">2025 코딩교육 의무화</span></div>
+                        <div class="meta-item"><span class="meta-label">브랜드</span><br><span class="meta-value">코딩놀자(5천만), 아트앤하트</span></div>
+                    </div>
+                    <p class="hypo-desc">학원은 2층을 "먼저 찾는" 우량 업종 (서울경제 보도). 7,773세대 배후면 학생 30~40명 확보는 현실적. 코딩학원은 의무교육화로 수요 폭발 중. 코딩놀자는 5천만원대 소액 창업으로 진입장벽 낮음.</p>
+                    <p class="hypo-action">ACTION: 코딩놀자/아트앤하트 본사에 입점 제안 + 학원 창업 카페 매물 등록 + "7,773세대 배후" 핵심 메시지</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 반박 논리 -->
+        <section>
+            <h2>4. 약점 반박 무기</h2>
+
+            <h3>"2층이라 안 된다"</h3>
+            <div class="insight-box">
+                <p>서울경제: "학원/병원 등 우량 임차 업종이 먼저 찾는 상가 2층". 2층 임대료는 1층의 60.9% 수준. IT 발달로 네이버/인스타 검색 후 찾아오는 목적형 방문이 주류 - 2층 약점이 크게 줄어듬. 동물병원 2층 개원 비율 0.5%→23%.</p>
+            </div>
+
+            <h3>"자양동은 별로다"</h3>
+            <div class="insight-box">
+                <p>한경 2026.01: "옆은 성수동, 앞은 청담동... 변화 시작된 자양동". 뉴데일리: "잠실/성수 이어 자양, 현금부자 대기중". 동서울터미널 1.8조 복합개발 2026말 착공. 반경 1km 6,500가구 재개발 진행 중. "별로"가 아니라 "아직 저평가".</p>
+            </div>
+
+            <h3>"월세가 비싸다"</h3>
+            <div class="insight-box">
+                <p>평당 6.25만원은 서울 2층 평균(8만원) 대비 저렴. 1층이었으면 400만원 이상. 올철거라 권리금 0원 = 진입비용 절감. 필라테스 매출 2,000만 기준 임대료 비율 12.5%로 적정 범위.</p>
+            </div>
+        </section>
+
+        <!-- Section 5: 영업 메시지 -->
+        <section>
+            <h2>5. 핵심 영업 메시지</h2>
+
+            <h3>숫자로 말하기</h3>
+            <div class="success-box">
+                <p>"자양역 3분, 대로변 2층 40평. <strong>7,773세대</strong> 아파트 배후. 보증금 5천/월세 250, 올철거. 동서울터미널 스타필드 <strong>2026년 말 착공</strong>, 반경 1km <strong>6,500가구</strong> 재개발 진행 중. 지금이 가장 낮은 임대료."</p>
+            </div>
+
+            <h3>성수동 비교</h3>
+            <div class="success-box">
+                <p>"성수동 10평 1층 월세가 2,400만원. 자양동은 다리 하나 건너 40평 2층에 250만원. 성수동 임대료는 1년 만에 1.5배 올랐고, 권리금은 1억 상승. 자양동은 지금이 성수동의 3~5년 전."</p>
+            </div>
+        </section>
+
+        <!-- Section 6: 실행 계획 -->
+        <section>
+            <h2>6. 실행 계획 (우선순위순)</h2>
+
+            <h3>이번 주</h3>
+            <ul class="action-list">
+                <li class="priority-high"><strong>[가설1]</strong> 공유 뷰티 라운지 모델 검토 - 아데르(adere.co.kr) 벤치마킹, 인테리어 견적</li>
+                <li class="priority-high"><strong>[가설2]</strong> 클럽필라테스 본사 전화 - "자양역 5분 대로변 2층 40평, 7,773세대 배후"</li>
+                <li class="priority-high"><strong>[가설3]</strong> 메디게이트/개원닷컴에 매물 등록 - 피부과/치과/동물병원 타겟</li>
+                <li class="priority-high"><strong>[채널]</strong> 네모/스매치에 매물 등록 (무료)</li>
+            </ul>
+
+            <h3>다음 주</h3>
+            <ul class="action-list">
+                <li class="priority-mid"><strong>[가설2]</strong> 네이버 "필라테스 창업" 카페 매물 포스팅</li>
+                <li class="priority-mid"><strong>[가설5]</strong> 코딩놀자/아트앤하트 본사 입점 제안</li>
+                <li class="priority-mid"><strong>[채널]</strong> 성수동 부동산 3곳에 "밀려나는 뷰티 업종" 역질문</li>
+                <li class="priority-mid"><strong>[채널]</strong> 자양동+건대 부동산 10곳에 성사 인센티브 100만원 제안</li>
+            </ul>
+
+            <h3>이번 달</h3>
+            <ul class="action-list">
+                <li class="priority-low"><strong>[가설1]</strong> 공유 뷰티 확정 시 인테리어 착수 + 인스타/당근 모집 시작</li>
+                <li class="priority-low"><strong>[채널]</strong> 브랜드파트너스(thebrandpartners.co.kr)에 공간 컨설팅 문의</li>
+                <li class="priority-low"><strong>[피드백]</strong> 거절 사유 패턴 수집 → 조건/메시지 조정</li>
+            </ul>
+        </section>
+
+        <!-- Section 7: 조건 유연화 카드 -->
+        <section>
+            <h2>7. 협상 카드 (필요시)</h2>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">렌트프리</div>
+                    <div class="stat-label">1~2개월</div>
+                    <div class="stat-sub">인테리어 기간 무료</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">보증금 조정</div>
+                    <div class="stat-label">5,000 → 3,000만</div>
+                    <div class="stat-sub">진입장벽 낮추기</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">단계적 인상</div>
+                    <div class="stat-label">1년차 200 → 2년차 250</div>
+                    <div class="stat-sub">초기 부담 완화</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>RALPH Loop Research Report | 10 AI Agents | 자양동 553-264 능동로31 2층</p>
+            <p>Generated 2026.03.06</p>
+        </footer>
+    </div>
+</body>
+</html>
